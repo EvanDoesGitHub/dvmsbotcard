@@ -1,0 +1,198 @@
+[
+  {
+    "id": "card1",
+    "title": "Snowy Ken",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1158530804708823171/1344503636449038417/IMG_3893.jpg?ex=681b74d6&is=681a2356&hm=c90ac0908fbecaa3f8c73b6e78c5a9282104a55e663ee56e30b197bc9d198ca1&=&format=webp&width=1334&height=1778",
+    "value": 41
+  },
+  {
+    "id": "card2",
+    "title": "Serious Joshua",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+    "value": 30
+  },
+  {
+    "id": "card3",
+    "title": "Halloween Evan",
+    "rarity": "Rare",
+    "image": "https://media.discordapp.net/attachments/1158530804708823171/1308534056568225893/IMG_3305.jpg?ex=681bc6ce&is=681a754e&hm=82b091b24795c1b55e72a6bf266ba054aedbc834954b194ab88da77cfcc9c55e&=&format=webp&width=2358&height=1572",
+    "value": 119
+  },
+  {
+    "id": "card4",
+    "title": "H4PP7?B3N!??",
+    "rarity": "Mythic",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1359494816865452073/generated_video_1.gif?ex=681deb36&is=681c99b6&hm=f9d0daad0e59ba6c9f965b050580a7e19daeaa3585fb0c3b07c87cc3c45fad69&=&width=1280&height=640",
+    "value": 999
+  },
+  {
+    "id": "card5",
+    "title": "Dragon Ian",
+    "rarity": "Rare",
+    "image": "https://media.discordapp.net/attachments/1286419981390581810/1362937301977796658/IMG_3917.jpg?ex=681bf0c6&is=681a9f46&hm=d6fb94ef6577b8b5cfb851fd1e3faa730060ef14ac3570c213bb8546acd9b130&=&format=webp&width=1178&height=1572",
+    "value": 84
+  },
+  {
+    "id": "card6",
+    "title": "Piano Evan",
+    "rarity": "Legendary",
+    "image": "https://media.discordapp.net/attachments/1248377898998566973/1369524811453300816/IMG_4022.jpg?ex=681c2cdf&is=681adb5f&hm=9966f9a0e2d47e4f65b65de8d4dac1e68938a3598e4b84e2b41b5777764317aa&=&format=webp&width=2358&height=1572",
+    "value": 410
+  },
+  {
+    "id": "card7",
+    "title": "Sleeping Havish",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369809326285389824/20250118_005355.jpg?ex=681d35d9&is=681be459&hm=2eac3ee4e5e4ae62591ad55bd05c3d8d003b313bcd0fd0d5ce92dd1bb06cb5e9&=&format=webp&width=2272&height=1704",
+    "value": 45
+  },
+  {
+    "id": "card8",
+    "title": "Picture Wyatt",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369804202640932874/IMG_20250320_093448891.jpg?ex=681d3113&is=681bdf93&hm=3d19ece8542d85048cfae99d66c89feac8b2c245641ce0bae0c303db57b85564&=&format=webp&width=1334&height=1778",
+    "value": 52
+  },
+  {
+    "id": "card9",
+    "title": "Yellow Ohio Final Boss Caelan",
+    "rarity": "Epic",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803789636472953/IMG_20250409_120358377.jpg?ex=681d30b1&is=681bdf31&hm=599bbe2dd23e15cb806a3d1df0c74d0e9bddaf29c09d8c1c8c4a5db5a176d61f&=&format=webp&width=1334&height=1778",
+    "value": 201
+  },
+  {
+    "id": "card10",
+    "title": "Smiling Wyatt",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803765733134337/IMG_3810.jpg?ex=681d30ab&is=681bdf2b&hm=4e53749cf36dba70f8d2f073cb7ed21b45d956bfad88329db76abf0854f6592d&=&format=webp&width=1334&height=1778",
+    "value": 31
+  },
+  {
+    "id": "card11",
+    "title": "Swingin Housten",
+    "rarity": "Rare",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369804148366905496/IMG_20250408_111917830.jpg?ex=681d3106&is=681bdf86&hm=bc74d8a74f8920a2567f125495a1d461ded7ec802ecff597e716e7e58b3248cc&=&format=webp&width=1334&height=1778",
+    "value": 109
+  },
+  {
+    "id": "card12",
+    "title": "Side-Eye Franklin",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659361255434/IMG_20250411_112939886.jpg?ex=681d3092&is=681bdf12&hm=0b29394bdb54677857f36f288178b6444bcd52005018a111e824489af8767c3a&=&format=webp&width=1178&height=1572",
+    "value": 43
+  },
+  {
+    "id": "card13",
+    "title": "Surprised Jason",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659809919026/IMG_20250411_113043875.jpg?ex=681d3092&is=681bdf12&hm=ea5a06a080893bc097a891badf2dfd1bec2e440c155b2040e6bb9189f275d1cc&=&format=webp&width=1178&height=1572",
+    "value": 53
+  },
+  {
+    "id": "card14",
+    "title": "Smirking Rod",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803640667373779/IMG_3811.jpg?ex=681d308d&is=681bdf0d&hm=caac5cec111d9e1afc96530ce7f579d1c74b8a0bd22048421e0fbe7770b0dc31&=&format=webp&width=1334&height=1778",
+    "value": 20
+  },
+  {
+    "id": "card15",
+    "title": "Hungry Evan",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803564100091974/IMG_3897.jpg?ex=681d307b&is=681bdefb&hm=e67fc4a284aabc3db67fa33a451ad867f43ec26c124aa52bc931d48fa34b985f&=&format=webp&width=1338&height=1780",
+    "value": 54
+  },
+  {
+    "id": "card16",
+    "title": "Sleepy Evan",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803495007457370/IMG_3984.jpg?ex=681d306a&is=681bdeea&hm=c6708475e958322f57a17ee5edd94d70a7e6934dc3b753d22552abfb643ef253&=&format=webp&width=1000&height=1780",
+    "value": 32
+  },
+  {
+    "id": "card17",
+    "title": "Big Brain Maddie",
+    "rarity": "Uncommon",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369871472352563200/IMG_5489.jpg?ex=681d6fb9&is=681c1e39&hm=ff0f6cabae8136c2deb27632390bddb5dab0d167a6369a86f724daa81c046fe2&=&format=webp&width=1334&height=1778",
+    "value": 39
+  },
+  {
+    "id": "card18",
+    "title": "Beautiful Ken",
+    "rarity": "Rare",
+    "image": "https://media.discordapp.net/attachments/1359266347078520872/1369872064432836638/IMG_5084.jpg?ex=681d7047&is=681c1ec7&hm=a6deb6b7642491f8894e80e2548b61539327deadfcc337a5414ce4ba6b08d401&=&format=webp&width=1334&height=1778",
+    "value": 89
+  },
+  {
+    "id": "card19",
+    "title": "Wolf-Cut Maddie",
+    "rarity": "Common",
+    "image": "https://media.discordapp.net/attachments/1158530804708823171/1229893526733455472/IMG_0527.jpg?ex=681dbedb&is=681c6d5b&hm=352f833b564e95c44ff69f741a14288133b498123e62248ec4d07831dd8e1306&=&format=webp&width=1334&height=1778",
+    "value": 12
+  },
+  {
+    "id": "card20",
+    "title": "Halloween Isi (Grade 5)",
+    "rarity": "Rare",
+    "image": "https://media.discordapp.net/attachments/1034600000493191258/1370158727868715130/IMG_0459.jpg?ex=681e7b41&is=681d29c1&hm=bcfc28aa0c823bc00ebd5cfb03a196d80a698c8a4e6cbc4856b5bdd9be197c1b&=&format=webp&width=1334&height=1778",
+    "value": 86
+  },
+  {
+    "id": "card21",
+    "title": "Seven Horsemen",
+    "rarity": "Mythic",
+    "image": "https://media.discordapp.net/attachments/1072693765480915074/1370161877757464606/Screenshot_20250402_140911_Photos.jpg?ex=681e7e30&is=681d2cb0&hm=14b2c0bce77d18edec7e8e4636909908d42d6a99ba6d34d98cf9872020f4f0e2&=&format=webp&width=708&height=1572",
+    "value": 983
+  },
+  {
+    "id": "card22",
+    "title": "Monkey Aidan",
+    "rarity": "Common",
+    "image": "https://media.discordapp.net/attachments/1072693765480915074/1370161876855558254/IMG_5759.png?ex=681e7e2f&is=681d2caf&hm=d23824d397c681270d4b1feac4925dc8fabb862920bacb1a32bb3892e98e9cd2&=&format=webp&quality=lossless&width=726&height=1572",
+    "value": 17
+  },
+  {
+    "id": "card23",
+    "title": "Omer's Little Brother",
+    "rarity": "Common",
+    "image": "https://media.discordapp.net/attachments/1072693765480915074/1370161876453036102/imagejpeg_01.jpg?ex=681e7e2f&is=681d2caf&hm=1afa80ca454839bf98f67ab98fbceaea955856a64c9e28deb225e391636bf813&=&format=webp&width=1178&height=1572",
+    "value": 24
+  },
+  {
+    "id": "card24",
+    "title": "Surprised Kayden",
+    "rarity": "Common",
+    "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211424453791776/Screenshot_2025-05-08_9.30.15_PM.png?ex=681eac54&is=681d5ad4&hm=6599dd68c4b6974c27e95fda083e54a5070557992a0a5b8d02bb23ff5cceb1dd&",
+    "value": 12
+  },
+  {
+    "id": "card25",
+    "title": "Headband Aidan",
+    "rarity": "Common",
+    "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211424814633020/Screenshot_2025-05-08_9.29.49_PM.png?ex=681eac54&is=681d5ad4&hm=4ce71f3cabb6f2cd37ad40188037cbdc472d213e603f9d32fdc67fb1c7c658a4&",
+    "value": 10
+  },
+  {
+    "id": "card26",
+    "title": "Mad Caelan",
+    "rarity": "Rare",
+    "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211425053835324/Screenshot_2025-05-08_9.27.34_PM.png?ex=681eac55&is=681d5ad5&hm=34f6c4c5b2eec16f7b9b34b8404ef0f8c12aaf7ae02c743adc70897436155ed9&",
+    "value": 113
+  },
+  {
+    "id": "card27",
+    "title": "Freaky Braeden",
+    "rarity": "Common",
+    "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211425339052094/Screenshot_2025-05-08_9.27.22_PM.png?ex=681eac55&is=681d5ad5&hm=e26fdb51f78e976ed97978034fef15bd4063a8541bf4edd4821b8984e626d674&",
+    "value": 24
+  },
+  {
+    "id": "card28",
+    "title": "Side-Eye Kayden",
+    "rarity": "Common",
+    "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211426089828362/Screenshot_2025-05-08_9.26.27_PM.png?ex=681eac55&is=681d5ad5&hm=70593a8030bc166dc86ab31aa6dfd86284eac36a6380cfcb5a55713747436769&",
+    "value": 24
+  }
+]

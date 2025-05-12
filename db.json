@@ -1,0 +1,1431 @@
+{
+  "users": {
+    "722463127782031400": {
+      "inventory": [
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 17,
+          "instanceId": "eKOyL3Mt9mwXOH8O5U4fq",
+          "shiny": true,
+          "condition": "Poor"
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 12,
+          "instanceId": "_mbV3Df4elUMDKY7NF9kj",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card1",
+          "title": "Snowy Ken",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1344503636449038417/IMG_3893.jpg?ex=681b74d6&is=681a2356&hm=c90ac0908fbecaa3f8c73b6e78c5a9282104a55e663ee56e30b197bc9d198ca1&=&format=webp&width=1334&height=1778",
+          "value": 21,
+          "instanceId": "yZ8IJnNmAL1fHDlM8bkC5",
+          "shiny": true,
+          "condition": "Poor"
+        },
+        {
+          "id": "card11",
+          "title": "Swingin Housten",
+          "rarity": "Rare",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369804148366905496/IMG_20250408_111917830.jpg?ex=681d3106&is=681bdf86&hm=bc74d8a74f8920a2567f125495a1d461ded7ec802ecff597e716e7e58b3248cc&=&format=webp&width=1334&height=1778",
+          "value": 109,
+          "instanceId": "av8sD3gojcgABhnQL1vuJ",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card7",
+          "title": "Sleeping Havish",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369809326285389824/20250118_005355.jpg?ex=681d35d9&is=681be459&hm=2eac3ee4e5e4ae62591ad55bd05c3d8d003b313bcd0fd0d5ce92dd1bb06cb5e9&=&format=webp&width=2272&height=1704",
+          "value": 63,
+          "instanceId": "bBaO1Scv66hEFabhKhPeb",
+          "shiny": true,
+          "condition": "Average"
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "xkhQI5MAlhMSVo9j04QLP",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746741212731
+        },
+        {
+          "cardId": "card14",
+          "instanceId": "xRU9QpuM8urrICY3MosL5",
+          "shiny": true,
+          "condition": "Great",
+          "acquired": 1746741980840
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "GDx2glnlkaPJOA2ZWo0A2",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742021718
+        },
+        {
+          "cardId": "card14",
+          "instanceId": "WeIRMRZy6HSYVPV2wtZVo",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742419428
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "cd1yo_AQkHm5GMyhdryO8",
+          "shiny": true,
+          "condition": "Poor",
+          "acquired": 1746743133770
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "AwsqrVJOruhAyNDbtIDms",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746751509229
+        },
+        {
+          "cardId": "card2",
+          "instanceId": "aK2WzKyj929qjruz1yAb6",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746751513346
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "vkVEKVvtmCZLE5zlrhU6S",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746792473882
+        },
+        {
+          "cardId": "card3",
+          "instanceId": "k-B-TSboD3_KPBhQ28qG1",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746843369927
+        },
+        {
+          "cardId": "card28",
+          "instanceId": "Au1wZxxs5Uvt9Ba8nRgN1",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746851401164
+        },
+        {
+          "cardId": "card29",
+          "instanceId": "Z43OEW9lSKsIwl0MfN712",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746986207734
+        }
+      ],
+      "lastDrops": [
+        1746586114750,
+        1746587386056,
+        1746587526369,
+        1746587888838,
+        1746588459683,
+        1746588463941,
+        1746588465791,
+        1746588467775,
+        1746588469249,
+        1746588471047
+      ],
+      "cooldownEnd": 1746592237825,
+      "collected": [
+        "card2",
+        "card5",
+        "card6",
+        "card1",
+        "card9",
+        "card11",
+        "card7"
+      ],
+      "balance": 1129,
+      "lastGroupId": "card5.0.2",
+      "lastDaily": 1746986859518,
+      "dailyStreak": 1
+    },
+    "658659156986953758": {
+      "lastDrops": [
+        1746741635413
+      ],
+      "cooldownEnd": 0,
+      "inventory": [],
+      "collected": [
+        "card2",
+        "card1"
+      ]
+    },
+    "930123502185488395": {
+      "lastDrops": [
+        1746751119327,
+        1746751122707,
+        1746751125379,
+        1746751128136,
+        1746751130580,
+        1746751133024,
+        1746751135496,
+        1746751138685,
+        1746751144978,
+        1746751150973
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "id": "card5",
+          "title": "Dragon Ian",
+          "rarity": "Rare",
+          "image": "https://media.discordapp.net/attachments/1286419981390581810/1362937301977796658/IMG_3917.jpg?ex=681bf0c6&is=681a9f46&hm=d6fb94ef6577b8b5cfb851fd1e3faa730060ef14ac3570c213bb8546acd9b130&=&format=webp&width=1178&height=1572",
+          "value": 40
+        },
+        {
+          "id": "card5",
+          "title": "Dragon Ian",
+          "rarity": "Rare",
+          "image": "https://media.discordapp.net/attachments/1286419981390581810/1362937301977796658/IMG_3917.jpg?ex=681bf0c6&is=681a9f46&hm=d6fb94ef6577b8b5cfb851fd1e3faa730060ef14ac3570c213bb8546acd9b130&=&format=webp&width=1178&height=1572",
+          "value": 40
+        },
+        {
+          "id": "card1",
+          "title": "Snowy Ken",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1344503636449038417/IMG_3893.jpg?ex=681b74d6&is=681a2356&hm=c90ac0908fbecaa3f8c73b6e78c5a9282104a55e663ee56e30b197bc9d198ca1&=&format=webp&width=1334&height=1778",
+          "value": 10
+        },
+        {
+          "id": "card5",
+          "title": "Dragon Ian",
+          "rarity": "Rare",
+          "image": "https://media.discordapp.net/attachments/1286419981390581810/1362937301977796658/IMG_3917.jpg?ex=681bf0c6&is=681a9f46&hm=d6fb94ef6577b8b5cfb851fd1e3faa730060ef14ac3570c213bb8546acd9b130&=&format=webp&width=1178&height=1572",
+          "value": 40
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 11
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 11
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 11
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "nI57xV-6ma6pGTzkDKInH",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751121124
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "JuFOLn5jfA0ElzTlexOlh",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746751123834
+        },
+        {
+          "cardId": "card18",
+          "instanceId": "cYhulICmj8Vx_pQF11o4X",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751126418
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "89lyb0pOBN-lWDrnqrN4j",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746751129362
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "4vgiGlZ3Gd7p2vTmisvGE",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751131686
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "uNIRYMRSPiD4v47xGE_6o",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751134202
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "_GGTiNd6_MHVtwPlebvEI",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746751137540
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "OYWkh65DZhPNQbIHSx83L",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746751140784
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "z1307y043WXYbDruZFU65",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751149401
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "9U6K3sI-0Ri0sZ29VSrlg",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746751153718
+        }
+      ],
+      "collected": [
+        "card5",
+        "card1",
+        "card2"
+      ]
+    },
+    "1020802666940596326": {
+      "lastDrops": [
+        1746755899497,
+        1746755909171,
+        1746755912093,
+        1746755915240,
+        1746755918400,
+        1746755923663,
+        1746755927147,
+        1746755930975,
+        1746755933392,
+        1746755938780
+      ],
+      "cooldownEnd": 1746761294089,
+      "inventory": [
+        {
+          "id": "card13",
+          "title": "Surprised Jason",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659809919026/IMG_20250411_113043875.jpg?ex=681d3092&is=681bdf12&hm=ea5a06a080893bc097a891badf2dfd1bec2e440c155b2040e6bb9189f275d1cc&=&format=webp&width=1178&height=1572",
+          "value": 17,
+          "instanceId": "70B698ugZSk9_xgAEy5vF",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card7",
+          "title": "Sleeping Havish",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369809326285389824/20250118_005355.jpg?ex=681d35d9&is=681be459&hm=2eac3ee4e5e4ae62591ad55bd05c3d8d003b313bcd0fd0d5ce92dd1bb06cb5e9&=&format=webp&width=2272&height=1704",
+          "value": 45,
+          "instanceId": "QpE0z_iBWJhafFyvcQuHe",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card10",
+          "title": "Smiling Wyatt",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803765733134337/IMG_3810.jpg?ex=681d30ab&is=681bdf2b&hm=4e53749cf36dba70f8d2f073cb7ed21b45d956bfad88329db76abf0854f6592d&=&format=webp&width=1334&height=1778",
+          "value": 36,
+          "instanceId": "YsM_wHNhULPgADtPUsIyC",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 14,
+          "instanceId": "3tedmqI-b3PRiu6qEpSNf",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card14",
+          "title": "Smirking Rod",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803640667373779/IMG_3811.jpg?ex=681d308d&is=681bdf0d&hm=caac5cec111d9e1afc96530ce7f579d1c74b8a0bd22048421e0fbe7770b0dc31&=&format=webp&width=1334&height=1778",
+          "value": 20,
+          "instanceId": "mCWo3ubUKy7QO2xMT9a9t",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card13",
+          "title": "Surprised Jason",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659809919026/IMG_20250411_113043875.jpg?ex=681d3092&is=681bdf12&hm=ea5a06a080893bc097a891badf2dfd1bec2e440c155b2040e6bb9189f275d1cc&=&format=webp&width=1178&height=1572",
+          "value": 17,
+          "instanceId": "its5XY8A5UXCJtB7RWNXy",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card15",
+          "title": "Hungry Evan",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803564100091974/IMG_3897.jpg?ex=681d307b&is=681bdefb&hm=e67fc4a284aabc3db67fa33a451ad867f43ec26c124aa52bc931d48fa34b985f&=&format=webp&width=1338&height=1780",
+          "value": 63,
+          "instanceId": "ff8GL5vOjIYyboy79eP3S",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "VYnlEJJCdAsApjBHWGiJK",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746741326169
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "kwxwJkSvNPfs2y4A_EZZz",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746741339937
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "r_jMiN5hcn9G_8cvuh0Rd",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746741348239
+        },
+        {
+          "cardId": "card5",
+          "instanceId": "VLeZOiuOwJyGSGD-lGCti",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746741352197
+        },
+        {
+          "cardId": "card5",
+          "instanceId": "exA8RZuYjaTygOsgl_OoA",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746741365173
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "O7zjPGIO1i6_blz0fFcj9",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746755921312
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "jv7AwKnvpFD61feJ8Z442",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746755926156
+        },
+        {
+          "cardId": "card17",
+          "instanceId": "v7mUBWmvcJUBbGIIKby9u",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746755929707
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "aoYoUW3YLB4SfU_qyBvVo",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746755935339
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "dDt02HNcoFWcXdyeHlAa_",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746755940834
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "aOXst78a7IHEWSUKO9raB",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746755953465
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "FV2aaB1RXvzcQZGjNM98A",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746755955799
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "BRGfwZk-nJmIC1rEmZgK_",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746755958235
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "tzLCndS0zV_36TUSKU_Qx",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746755961815
+        }
+      ],
+      "collected": [
+        "card13",
+        "card7",
+        "card10",
+        "card2",
+        "card14",
+        "card15"
+      ]
+    },
+    "1072618326527848679": {
+      "lastDrops": [
+        1746849670631,
+        1746849681465,
+        1746849689380,
+        1746849696094,
+        1746849709369,
+        1746849729844,
+        1746849735584,
+        1746849742002,
+        1746849748999,
+        1746849753792
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "id": "card12",
+          "title": "Side-Eye Franklin",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659361255434/IMG_20250411_112939886.jpg?ex=681d3092&is=681bdf12&hm=0b29394bdb54677857f36f288178b6444bcd52005018a111e824489af8767c3a&=&format=webp&width=1178&height=1572",
+          "value": 13,
+          "instanceId": "kQtoLg36W9P_zahEUVrwC",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card13",
+          "title": "Surprised Jason",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659809919026/IMG_20250411_113043875.jpg?ex=681d3092&is=681bdf12&hm=ea5a06a080893bc097a891badf2dfd1bec2e440c155b2040e6bb9189f275d1cc&=&format=webp&width=1178&height=1572",
+          "value": 12,
+          "instanceId": "t7lH-OchnJXTM0s1-lVdg",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "cardId": "card20",
+          "instanceId": "4TYdwkg7wUEATfz8QdT2L",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746849673714
+        },
+        {
+          "cardId": "card27",
+          "instanceId": "rQcjovNsg7hIS-8Ga9rhE",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746849684796
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "jJ7wUBSQHael7Wfd-QvmB",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746849691739
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "gtJ3mb7ET2TQcRCa65fuO",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746849698516
+        },
+        {
+          "cardId": "card24",
+          "instanceId": "GklCbHmFx_HaiDacMe7-c",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746849711861
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "YHHMQYfeXMpqiA0nyr9re",
+          "shiny": true,
+          "condition": "Poor",
+          "acquired": 1746849732813
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "aRxtg-pMh6S4Vk2S4oynX",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746849738760
+        },
+        {
+          "cardId": "card6",
+          "instanceId": "185HQyxKyTJ_3i1OJm22F",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746849744973
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "WZJapnAVF0RsU6XRFA-wG",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746849751457
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "oDECW5UqiW9yx8E7GFdji",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746849758730
+        }
+      ],
+      "claimCount": null,
+      "collected": [
+        "card12",
+        "card13"
+      ]
+    },
+    "924323086453604373": {
+      "lastDrops": [
+        1746742242299,
+        1746742250144,
+        1746742256028,
+        1746742262218,
+        1746742267057,
+        1746742278078,
+        1746742283665,
+        1746742287729,
+        1746742292117,
+        1746742299898
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 14,
+          "instanceId": "9LA0Ly4cU58geAUTSU0rA",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card3",
+          "title": "Halloween Evan",
+          "rarity": "Rare",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1308534056568225893/IMG_3305.jpg?ex=681bc6ce&is=681a754e&hm=82b091b24795c1b55e72a6bf266ba054aedbc834954b194ab88da77cfcc9c55e&=&format=webp&width=2358&height=1572",
+          "value": 137,
+          "instanceId": "l0dPd3Eq1d6zDZklhTyWd",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card14",
+          "title": "Smirking Rod",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803640667373779/IMG_3811.jpg?ex=681d308d&is=681bdf0d&hm=caac5cec111d9e1afc96530ce7f579d1c74b8a0bd22048421e0fbe7770b0dc31&=&format=webp&width=1334&height=1778",
+          "value": 17,
+          "instanceId": "O2ZeycJcGvDDGiB9gw5hY",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card9",
+          "title": "Yellow Ohio Final Boss Caelan",
+          "rarity": "Epic",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803789636472953/IMG_20250409_120358377.jpg?ex=681d30b1&is=681bdf31&hm=599bbe2dd23e15cb806a3d1df0c74d0e9bddaf29c09d8c1c8c4a5db5a176d61f&=&format=webp&width=1334&height=1778",
+          "value": 201,
+          "instanceId": "ARO_0_jcKSqmsCzpU5iDB",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card9",
+          "title": "Yellow Ohio Final Boss Caelan",
+          "rarity": "Epic",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803789636472953/IMG_20250409_120358377.jpg?ex=681d30b1&is=681bdf31&hm=599bbe2dd23e15cb806a3d1df0c74d0e9bddaf29c09d8c1c8c4a5db5a176d61f&=&format=webp&width=1334&height=1778",
+          "value": 201,
+          "instanceId": "5qJmhCK4tAPwIj_HA0JQY",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card10",
+          "title": "Smiling Wyatt",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803765733134337/IMG_3810.jpg?ex=681d30ab&is=681bdf2b&hm=4e53749cf36dba70f8d2f073cb7ed21b45d956bfad88329db76abf0854f6592d&=&format=webp&width=1334&height=1778",
+          "value": 36,
+          "instanceId": "64C62R85YtxC97taDGuQZ",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card14",
+          "title": "Smirking Rod",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803640667373779/IMG_3811.jpg?ex=681d308d&is=681bdf0d&hm=caac5cec111d9e1afc96530ce7f579d1c74b8a0bd22048421e0fbe7770b0dc31&=&format=webp&width=1334&height=1778",
+          "value": 17,
+          "instanceId": "ZXrisUafGobzX4ncgd5g4",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card2",
+          "title": "Serious Joshua",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1319475972076077086/Messenger_creation_31FC8983-264E-42D1-A78F-AFDF2F90A060.jpg?ex=681c0842&is=681ab6c2&hm=cd0859e5e27f8fd16a0afcc5d52c5b39a315d0645076b6bbf7aecadde00a0427&=&format=webp&width=2358&height=1572",
+          "value": 12,
+          "instanceId": "sEbgFtSegJvFndQJuaRpV",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card1",
+          "title": "Snowy Ken",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1344503636449038417/IMG_3893.jpg?ex=681b74d6&is=681a2356&hm=c90ac0908fbecaa3f8c73b6e78c5a9282104a55e663ee56e30b197bc9d198ca1&=&format=webp&width=1334&height=1778",
+          "value": 28,
+          "instanceId": "Q-vGZN4AKQukCnxosxsaG",
+          "shiny": true,
+          "condition": "Great"
+        },
+        {
+          "id": "card8",
+          "title": "Picture Wyatt",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369804202640932874/IMG_20250320_093448891.jpg?ex=681d3113&is=681bdf93&hm=3d19ece8542d85048cfae99d66c89feac8b2c245641ce0bae0c303db57b85564&=&format=webp&width=1334&height=1778",
+          "value": 60,
+          "instanceId": "ba8KcKZqhZSC22fgeGnk3",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "cardId": "card13",
+          "instanceId": "YShpRfjOusdlFDBkZxV4L",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742245809
+        },
+        {
+          "cardId": "card8",
+          "instanceId": "bu7I7JNC5iXDq3th_-IsA",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742251823
+        },
+        {
+          "cardId": "card17",
+          "instanceId": "-HGE_C-tNSgKRBS8s8NKE",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746742258519
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "PcDsMP3NwdUrBbKlEDl8y",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742263957
+        },
+        {
+          "cardId": "card15",
+          "instanceId": "KPe9M-UF06vD5vySEEIbH",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742268773
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "o6qrnaVgt5Fzt5v_acGJn",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742280147
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "i9BKg9dxlXXXwfDDEOJGe",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742285255
+        },
+        {
+          "cardId": "card3",
+          "instanceId": "d06SP4R4sccvoQ2GQPstD",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742293895
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "OMTm4-4myxA0izyY2rwM6",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742301573
+        }
+      ],
+      "collected": [
+        "card2",
+        "card3",
+        "card14",
+        "card9",
+        "card10",
+        "card1",
+        "card8"
+      ]
+    },
+    "930174257059729478": {
+      "lastDrops": [
+        1746750071645,
+        1746750080340,
+        1746750086103,
+        1746750089713,
+        1746750096899,
+        1746750100933,
+        1746750104644,
+        1746750108161,
+        1746750112402,
+        1746750116036
+      ],
+      "cooldownEnd": 1746753720141,
+      "inventory": [
+        {
+          "id": "card14",
+          "title": "Smirking Rod",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803640667373779/IMG_3811.jpg?ex=681d308d&is=681bdf0d&hm=caac5cec111d9e1afc96530ce7f579d1c74b8a0bd22048421e0fbe7770b0dc31&=&format=webp&width=1334&height=1778",
+          "value": 17,
+          "instanceId": "5O5ZGao70T_3YBeBYc3Jm",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card1",
+          "title": "Snowy Ken",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1158530804708823171/1344503636449038417/IMG_3893.jpg?ex=681b74d6&is=681a2356&hm=c90ac0908fbecaa3f8c73b6e78c5a9282104a55e663ee56e30b197bc9d198ca1&=&format=webp&width=1334&height=1778",
+          "value": 17,
+          "instanceId": "py51jfa1cVneWvvLTI2TM",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card12",
+          "title": "Side-Eye Franklin",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659361255434/IMG_20250411_112939886.jpg?ex=681d3092&is=681bdf12&hm=0b29394bdb54677857f36f288178b6444bcd52005018a111e824489af8767c3a&=&format=webp&width=1178&height=1572",
+          "value": 12,
+          "instanceId": "FRZ8djWwRIWyG_3PZ4Nw6",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card10",
+          "title": "Smiling Wyatt",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803765733134337/IMG_3810.jpg?ex=681d30ab&is=681bdf2b&hm=4e53749cf36dba70f8d2f073cb7ed21b45d956bfad88329db76abf0854f6592d&=&format=webp&width=1334&height=1778",
+          "value": 27,
+          "instanceId": "QjEvPKFFTJ4p6iMkXjDnZ",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card12",
+          "title": "Side-Eye Franklin",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803659361255434/IMG_20250411_112939886.jpg?ex=681d3092&is=681bdf12&hm=0b29394bdb54677857f36f288178b6444bcd52005018a111e824489af8767c3a&=&format=webp&width=1178&height=1572",
+          "value": 12,
+          "instanceId": "XrNEwvmeCY_sWjo_-OSpA",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "id": "card16",
+          "title": "Sleepy Evan",
+          "rarity": "Common",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803495007457370/IMG_3984.jpg?ex=681d306a&is=681bdeea&hm=c6708475e958322f57a17ee5edd94d70a7e6934dc3b753d22552abfb643ef253&=&format=webp&width=1000&height=1780",
+          "value": 22,
+          "instanceId": "8_oTljRH-QznovcwNcmJL",
+          "shiny": false,
+          "condition": "Average"
+        },
+        {
+          "id": "card7",
+          "title": "Sleeping Havish",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369809326285389824/20250118_005355.jpg?ex=681d35d9&is=681be459&hm=2eac3ee4e5e4ae62591ad55bd05c3d8d003b313bcd0fd0d5ce92dd1bb06cb5e9&=&format=webp&width=2272&height=1704",
+          "value": 52,
+          "instanceId": "P5b6owITGZa1ppaeRK9nZ",
+          "shiny": false,
+          "condition": "Great"
+        },
+        {
+          "id": "card10",
+          "title": "Smiling Wyatt",
+          "rarity": "Uncommon",
+          "image": "https://media.discordapp.net/attachments/1359266347078520872/1369803765733134337/IMG_3810.jpg?ex=681d30ab&is=681bdf2b&hm=4e53749cf36dba70f8d2f073cb7ed21b45d956bfad88329db76abf0854f6592d&=&format=webp&width=1334&height=1778",
+          "value": 27,
+          "instanceId": "T6BqbzJE5lYbPq66EQsxs",
+          "shiny": false,
+          "condition": "Poor"
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "IN5fij1cNaiunp5HG2nCx",
+          "shiny": true,
+          "condition": "Great",
+          "acquired": 1746750076220
+        },
+        {
+          "cardId": "card15",
+          "instanceId": "qFxuSyWiwGsHUNihka-8E",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746750083204
+        },
+        {
+          "cardId": "card14",
+          "instanceId": "BLpLl4bkKmxg_wVo5yPKW",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746750087925
+        },
+        {
+          "cardId": "card16",
+          "instanceId": "M74gmaO17wcOqZ2d8s3mV",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746750091307
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "43Jl5d32uUKFPDkLw_72Z",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746750099105
+        },
+        {
+          "cardId": "card10",
+          "instanceId": "D5R_GJFku4YZxrpHlrEgA",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746750102675
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "lpQTqAOyUyM3AXTUiXdBH",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746750106160
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "oMCvw4NbnKfA2wPV4o9Au",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746750109849
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "h45sLPwYsHeaI9qgNuu_g",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746750114043
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "rntXzzA_1fOVdsPBs23in",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746750117732
+        }
+      ],
+      "collected": [
+        "card14",
+        "card1",
+        "card12",
+        "card10",
+        "card16",
+        "card7"
+      ]
+    },
+    "995445367552360608": {
+      "lastDrops": [
+        1746988251368,
+        1746988255552,
+        1746988258033,
+        1746988260049,
+        1746988262227,
+        1746988266733,
+        1746988269270,
+        1746988273891,
+        1746988277920,
+        1746988282824
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "cardId": "card19",
+          "instanceId": "kky5vqx0B12CDmi_8jb8b",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746741988734
+        },
+        {
+          "cardId": "card17",
+          "instanceId": "Ow0U0IDf01A4tJtZArryp",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746742008704
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "cl6RShjJ33t6ucgf7rY43",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742010378
+        },
+        {
+          "cardId": "card6",
+          "instanceId": "zHKQoHDhoSovYji83q3Qj",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746742024814
+        },
+        {
+          "cardId": "card17",
+          "instanceId": "P71vSwOsfcZQ_N-0ux7Vd",
+          "shiny": true,
+          "condition": "Average",
+          "acquired": 1746742044935
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "roVn8L_qID8ArpfDBV_yV",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746750692105
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "D9PCVwaDQkkN0Pm7kXD-A",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746750698946
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "i9KUIsZmKupxC6mp6AhJQ",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746750705945
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "mzTC5jurLLj9Oy242yOBA",
+          "shiny": true,
+          "condition": "Great",
+          "acquired": 1746750725957
+        },
+        {
+          "cardId": "card11",
+          "instanceId": "vMV38EnEIudhKA4D3kcEU",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746758328778
+        },
+        {
+          "cardId": "card20",
+          "instanceId": "l9XqZ3u5Am2Sd2kDMdSfu",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746758357350
+        },
+        {
+          "cardId": "card21",
+          "instanceId": "aDAxI_HNw6yx4cnmR9XXk",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746758364072
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "XO3Pkypsa9yApEjQL4x8t",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746790046958
+        },
+        {
+          "cardId": "card3",
+          "instanceId": "i3pj372YkNsk-UzdQramM",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746790058015
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "y_BgeYmyCluANI0Kab1P_",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746790085460
+        },
+        {
+          "cardId": "card14",
+          "instanceId": "3npdROvlmMeKlR5sr1uup",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746790088082
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "hoCSaWSkGiUMSXCHJAQdS",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746790089864
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "puq0LSEM5xSJ7diyoUi3l",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746790093451
+        },
+        {
+          "cardId": "card16",
+          "instanceId": "PZqgKXLyIN5wMT5Xgcfae",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746790094985
+        },
+        {
+          "cardId": "card13",
+          "instanceId": "44S8-3ecgreQaYCkH6tQp",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746790096621
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "zL9UWDpxHIq6sT2_X4a1f",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746790099008
+        },
+        {
+          "cardId": "card18",
+          "instanceId": "Y9CN5PgTxbTnWrJU9AOuj",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988265264
+        },
+        {
+          "cardId": "card7",
+          "instanceId": "LUfw3QWntt5Zym_NY348-",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988273362
+        },
+        {
+          "cardId": "card25",
+          "instanceId": "pKzfavpw8a_S-7MJdRPJE",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988277535
+        },
+        {
+          "cardId": "card1",
+          "instanceId": "xObdDXUn1yULbN1XYp2Cr",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988280933
+        },
+        {
+          "cardId": "card1",
+          "instanceId": "7GcNp1Vo9z80jNtbaRtXl",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746988284784
+        },
+        {
+          "cardId": "card24",
+          "instanceId": "I2NNm3jvJzY7ZTIKHysl_",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746988288521
+        },
+        {
+          "cardId": "card28",
+          "instanceId": "o9saumeKcMmFirLWvZXfa",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988291247
+        },
+        {
+          "cardId": "card28",
+          "instanceId": "fVzOk0f13lm4zmkda7ATB",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746988292605
+        },
+        {
+          "cardId": "card1",
+          "instanceId": "vkG6uNC_ZtQWmNVxvlNot",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746988294194
+        },
+        {
+          "cardId": "card22",
+          "instanceId": "Ek3ivqePt0OfWfqpQQM-7",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746988295849
+        }
+      ]
+    },
+    "910188808014823504": {
+      "lastDrops": [
+        1746792537956,
+        1746792544709,
+        1746792550156,
+        1746792570521,
+        1746792581223,
+        1746792585973,
+        1746792593719,
+        1746792598177,
+        1746792608850
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "cardId": "card19",
+          "instanceId": "li1tow5VjlWn_WiMn2KxG",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746742846306
+        },
+        {
+          "cardId": "card6",
+          "instanceId": "tml2Kh8p7wAx5aHhXGX3p",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746792552913
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "PElczYjF2_RFTlzoJwMZM",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746792602499
+        },
+        {
+          "cardId": "card20",
+          "instanceId": "Ti6MZtsgDUvv_zYOxmjsc",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746792611920
+        }
+      ]
+    },
+    "843522458493124608": {
+      "lastDrops": [],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "cardId": "card3",
+          "instanceId": "55P665y0pbog01S8nfYpA",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746743172321
+        },
+        {
+          "cardId": "card9",
+          "instanceId": "cjQ87aC1PaJ7F343pSO_l",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746743181449
+        }
+      ]
+    },
+    "693223591826948219": {
+      "lastDrops": [
+        1746753466708,
+        1746753472363,
+        1746753477795,
+        1746753482381,
+        1746753486801,
+        1746753491784,
+        1746753496123,
+        1746753502445,
+        1746753507689,
+        1746753512401
+      ],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "cardId": "card11",
+          "instanceId": "13Kau3uExXeMjvDSQe2AV",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746753469454
+        },
+        {
+          "cardId": "card8",
+          "instanceId": "wO4Rt-F3kQJ-RHZ_e-pmd",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746753475180
+        },
+        {
+          "cardId": "card23",
+          "instanceId": "VMLj6E9P4wRFL_8jMGIzM",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746753480255
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "3TOmo5nOqTXUQzExMOdF4",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746753484763
+        },
+        {
+          "cardId": "card1",
+          "instanceId": "OKyW8qZpB8xzD6zqx4mAb",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746753489854
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "qI6Fl4DJavhoHgEl6tlaF",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746753498579
+        },
+        {
+          "cardId": "card8",
+          "instanceId": "qmLHPwQyyQhpcddwWmBK2",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746753500220
+        },
+        {
+          "cardId": "card18",
+          "instanceId": "W44xqBFFTo7R7hLu60g7E",
+          "shiny": false,
+          "condition": "Great",
+          "acquired": 1746753505786
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "mJOFvcsk-MRVoLDVikU8s",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746753510228
+        },
+        {
+          "cardId": "card19",
+          "instanceId": "QS0Ml6vA27-NHYNImzOEb",
+          "shiny": false,
+          "condition": "Poor",
+          "acquired": 1746753516954
+        }
+      ]
+    },
+    "938601029308665916": {
+      "lastDrops": [],
+      "cooldownEnd": 0,
+      "inventory": [
+        {
+          "cardId": "card23",
+          "instanceId": "gXzuF7Bj6196PETSjUUBd",
+          "shiny": false,
+          "condition": "Average",
+          "acquired": 1746758353042
+        }
+      ]
+    }
+  },
+  "drops": {},
+  "trades": {},
+  "activeTrades": {},
+  "auctions": {
+    "AuC1xYz": {
+      "owner": "123456789012345678",
+      "item": {
+        "cardId": "card5",
+        "instanceIds": [
+          "abc123",
+          "def456"
+        ]
+      },
+      "start": 1710100000000,
+      "end": 1710103600000,
+      "highestBid": 150,
+      "highestBidder": "876543210987654321",
+      "bids": [
+        {
+          "bidder": "876543210987654321",
+          "amount": 100,
+          "time": 1710099950000
+        },
+        {
+          "bidder": "876543210987654321",
+          "amount": 150,
+          "time": 1710100100000
+        }
+      ],
+      "ended": true
+    },
+    "Zp0P9-hWPe5jSDx8fg09q": {
+      "id": "Zp0P9-hWPe5jSDx8fg09q",
+      "seller": "722463127782031400",
+      "card": {
+        "id": "card6",
+        "title": "Piano Evan",
+        "rarity": "Legendary",
+        "image": "https://media.discordapp.net/attachments/1248377898998566973/1369524811453300816/IMG_4022.jpg?ex=681c2cdf&is=681adb5f&hm=9966f9a0e2d47e4f65b65de8d4dac1e68938a3598e4b84e2b41b5777764317aa&=&format=webp&width=2358&height=1572",
+        "value": 472,
+        "instanceId": "Po9AvE7jyeZmgvIfW5cSs",
+        "shiny": false,
+        "condition": "Great"
+      },
+      "highestBid": 400,
+      "highestBidder": null,
+      "expiresAt": 1746848058914,
+      "ended": true,
+      "deposits": {}
+    }
+  }
+}
