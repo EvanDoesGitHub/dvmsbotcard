@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
 const path = require('path');
-const { nanoid } = require('nanoid');
+//const { nanoid } = require('nanoid'); // REMOVE THIS LINE
 const { sweepExpiredAuctions } = require('./utils/auctionUtils');
 require('dotenv').config();
 
@@ -53,6 +53,8 @@ async function initializeDatabase() {
     const command = args.shift().toLowerCase();
     if (!client.commands.has(command)) return;
     try {
+      // ADD THIS LINE:
+      const { nanoid } = await import('nanoid');
       await client.commands.get(command).execute(message, args, { cards, db, EmbedBuilder, nanoid });
     } catch (err) {
       console.error(err);
