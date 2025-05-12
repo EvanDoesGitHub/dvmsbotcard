@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/EvanDoesGitHub/DVMS/issues"
   },
-  "homepage": "https://github.com/EvanDoesGitHub/DVMS#readme"
+  "homepage": "https://github.com/EvanDoesGitHub/DVMS#readme",
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  }
 }
