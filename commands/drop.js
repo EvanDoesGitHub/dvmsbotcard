@@ -22,7 +22,8 @@ module.exports = {
 
       let user = db.data.users[dropperId];
       if (!user) {
-        user = { lastDrops: [], cooldownEnd: 0, inventory: [] };
+        // changed from null to 0
+        user = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
         db.data.users[dropperId] = user;
         console.log(`Creating new user: ${dropperId}`); // Added logging
       }
@@ -129,7 +130,7 @@ module.exports = {
           await db.read();
           let claimer = db.data.users[claimerId];
           if (!claimer) {
-            claimer = { lastDrops: [], cooldownEnd: 0, inventory: [] };
+            claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 }; // changed here too
             db.data.users[claimerId] = claimer;
             console.log(`Creating new user (claimer): ${claimerId}`); // Added logging
           }
@@ -144,11 +145,11 @@ module.exports = {
           });
           try {
             await db.write();
-             console.log(`Card claimed by: ${claimerId}`);
-          } catch(e){
-             console.error("Error writing to database (card claim):", error, { userId: claimerId });
-             message.reply("Error: Failed to write to the database after claim.");
-             return;
+            console.log(`Card claimed by: ${claimerId}`);
+          } catch (e) {
+            console.error("Error writing to database (card claim):", error, { userId: claimerId });
+            message.reply("Error: Failed to write to the database after claim.");
+            return;
           }
 
 
@@ -169,7 +170,7 @@ module.exports = {
             await dropMsg.edit({ embeds: [timedOut] });
           }
         } catch (error) {
-          console.error("Error in end event", error, {messageId: dropMsg.id });
+          console.error("Error in end event", error, { messageId: dropMsg.id });
         }
       });
     } catch (error) {
