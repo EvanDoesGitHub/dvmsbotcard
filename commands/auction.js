@@ -1,6 +1,5 @@
-// commands/auction.js
 const { EmbedBuilder } = require('discord.js');
-const { nanoid } = require('nanoid');
+// const { nanoid } = require('nanoid'); // Remove this line
 
 module.exports = {
   name: 'auction',
@@ -55,8 +54,10 @@ module.exports = {
       await db.write();
 
       // register auction
-      const auctionId = nanoid();
+      // const auctionId = nanoid(); // Remove this line
       const now = Date.now();
+      const { nanoid } = await import('nanoid');  // Dynamically import nanoid
+      const auctionId = nanoid();
       db.data.auctions[auctionId] = {
         id: auctionId,
         seller: userId,
@@ -130,7 +131,7 @@ module.exports = {
             .setDescription(`<@${userId}> bids **${bidAmount}₩** on **${auction.card.title}**`)
             .addFields(
               { name: 'Auction ID', value: auctionId, inline: true },
-              { name: 'Expires In', value: `${Math.ceil((auction.expiresAt - now)/1000)}s`, inline: true }
+              { name: 'Expires In', value: `${Math.ceil((auction.expiresAt - now) / 1000)}s`, inline: true }
             )
             .setColor(0xFFA500)
         ]
