@@ -10,7 +10,7 @@ module.exports = {
       try {
         await db.read();
       } catch (error) {
-        console.error("Error reading from database:", error);
+        console.error("Error reading from database:", error, { userId: message.author.id });
         message.reply("Error: Failed to read from the database.");
         return;
       }
@@ -24,6 +24,7 @@ module.exports = {
       if (!user) {
         user = { lastDrops: [], cooldownEnd: 0, inventory: [] };
         db.data.users[dropperId] = user;
+        console.log(`Creating new user: ${dropperId}`); // Added logging
       }
 
       // reset or check cooldown
@@ -45,7 +46,7 @@ module.exports = {
           try {
             await db.write();
           } catch (error) {
-            console.error("Error writing to database:", error);
+            console.error("Error writing to database (cooldown):", error, { userId: message.author.id });
             message.reply("Error: Failed to write to the database.");
             return;
           }
@@ -59,7 +60,7 @@ module.exports = {
         try {
           await db.write();
         } catch (error) {
-          console.error("Error writing to database:", error);
+          console.error("Error writing to database (lastDrops):", error, { userId: message.author.id });
           message.reply("Error: Failed to write to the database.");
           return;
         }
@@ -75,8 +76,8 @@ module.exports = {
       const selected = pool[Math.floor(Math.random() * pool.length)];
 
       //Check if selected is valid
-      if(!selected){
-        console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity);
+      if (!selected) {
+        console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity, { userId: message.author.id });
         message.reply("Error: Could not select a card.");
         return;
       }
@@ -100,7 +101,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle(`${sparkle}${selected.title} — ${condition}`)
         .setDescription(desc)
-        .setImage(selected.image ) // Use String, not object
+        .setImage(selected.image) // Use String, not object
         .setFooter({ text: `Value: ${finalValue}₩` });
 
       let dropMsg;
@@ -108,7 +109,7 @@ module.exports = {
         dropMsg = await message.reply({ embeds: [embed] });
         await dropMsg.react('✅');
       } catch (error) {
-        console.error("Error sending message or reacting:", error);
+        console.error("Error sending message or reacting:", error, { userId: message.author.id });
         message.reply("Error: Failed to send drop message or add reaction.");
         return;
       }
@@ -130,6 +131,7 @@ module.exports = {
           if (!claimer) {
             claimer = { lastDrops: [], cooldownEnd: 0, inventory: [] };
             db.data.users[claimerId] = claimer;
+            console.log(`Creating new user (claimer): ${claimerId}`); // Added logging
           }
 
           // store only cardId + instance, value/title etc looked up later
@@ -140,13 +142,21 @@ module.exports = {
             condition,
             acquired: Date.now(),
           });
-          await db.write();
+          try {
+            await db.write();
+             console.log(`Card claimed by: ${claimerId}`);
+          } catch(e){
+             console.error("Error writing to database (card claim):", error, { userId: claimerId });
+             message.reply("Error: Failed to write to the database after claim.");
+             return;
+          }
+
 
           message.channel.send(
             `🎉 <@${claimerId}> picked up **${selected.title}** (${selected.rarity}) ${sparkle}!`
           );
         } catch (error) {
-          console.error("Error in collect event:", error); //catch errors
+          console.error("Error in collect event:", error, { userId: reactor.id }); //catch errors
         }
       });
 
@@ -159,11 +169,11 @@ module.exports = {
             await dropMsg.edit({ embeds: [timedOut] });
           }
         } catch (error) {
-          console.error("Error in end event", error);
+          console.error("Error in end event", error, {messageId: dropMsg.id });
         }
       });
     } catch (error) {
-      console.error("Error in drop command:", error);
+      console.error("Error in drop command:", error, { userId: message.author.id });
       message.reply("An error occurred while processing the drop."); // send message to channel
     }
   },
