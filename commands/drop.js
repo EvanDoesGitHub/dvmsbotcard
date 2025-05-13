@@ -22,7 +22,6 @@ module.exports = {
 
       let user = db.data.users[dropperId];
       if (!user) {
-        // changed from null to 0
         user = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
         db.data.users[dropperId] = user;
         console.log(`Creating new user: ${dropperId}`); // Added logging
@@ -72,6 +71,11 @@ module.exports = {
 
       // pick rarity→card
       const { rarity } = getRarity();
+      // **Crucial Check:** Make sure 'cards' is an array before filtering
+      if (!Array.isArray(cards)) {
+        console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
+        return message.reply("Error: Card data is not loaded correctly.");
+      }
       const pool = cards.filter((c) => c.rarity === rarity);
       if (!pool.length) return message.reply(`No **${rarity}** cards.`);
       const selected = pool[Math.floor(Math.random() * pool.length)];
