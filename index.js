@@ -9,11 +9,13 @@ const cards = JSON.parse(fs.readFileSync('./cards.json'));
 
 // Function to initialize the database using dynamic import
 async function initializeDatabase() {
-  const { Low, JSONFile } = await import('lowdb');
+  const { Low } = await import('lowdb');
+  const { JSONFile } = await import('lowdb/node'); // Import JSONFile from lowdb/node
   const adapter = new JSONFile(path.join(__dirname, 'db.json'));
-  const db = new Low(adapter, { users: {}, drops: {}, auctions: [] });
+  const defaultData = { users: {}, drops: {}, auctions: [] }; // Corrected default data structure.
+  const db = new Low(adapter, defaultData);
   await db.read();
-  db.data ||= { users: {}, drops: {}, auctions: [] };
+  //db.data ||= { users: {}, drops: {}, auctions: [] }; // No need to assign here, already in defaultData
   await db.write();
   return db;
 }
