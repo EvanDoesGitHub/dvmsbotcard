@@ -11,11 +11,12 @@ const cards = JSON.parse(fs.readFileSync('./cards.json'));
 async function initializeDatabase() {
   const { Low } = await import('lowdb');
   const { JSONFile } = await import('lowdb/node'); // Import JSONFile from lowdb/node
-  const adapter = new JSONFile(path.join(__dirname, 'db.json'));
-  const defaultData = { users: {}, drops: {}, auctions: [] }; // Corrected default data structure.
+
+  // CHANGE IS HERE:  Use /mnt/data/db.json
+  const adapter = new JSONFile('/mnt/data/db.json');
+  const defaultData = { users: {}, drops: {}, auctions: [] };
   const db = new Low(adapter, defaultData);
   await db.read();
-  //db.data ||= { users: {}, drops: {}, auctions: [] }; // No need to assign here, already in defaultData
   await db.write();
   return db;
 }
@@ -55,7 +56,6 @@ async function initializeDatabase() {
     const command = args.shift().toLowerCase();
     if (!client.commands.has(command)) return;
     try {
-      // ADD THIS LINE:
       const { nanoid } = await import('nanoid');
       await client.commands.get(command).execute(message, args, { cards, db, EmbedBuilder, nanoid });
     } catch (err) {
