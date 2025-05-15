@@ -20,9 +20,10 @@ module.exports = {
       const HOUR = 60 * 60 * 1000;
       const BYPASS_USER_ID = '722463127782031400';
 
-      let user = db.data.users[dropperId];
+      let user = db.data?.users?.[dropperId]; // Added null/undefined checks with optional chaining
       if (!user) {
         user = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
+        if (!db.data) db.data = { users: {} }; // Ensure db.data exists
         db.data.users[dropperId] = user;
         console.log(`Creating new user: ${dropperId}`); // Added logging
       }
@@ -40,8 +41,8 @@ module.exports = {
           });
           return message.reply(`⏳ You've used all 10 drops. Resets at **${resetTime}**.`);
         }
-        user.lastDrops = user.lastDrops.filter((ts) => now - ts < HOUR);
-        if (user.lastDrops.length >= 10) {
+        user.lastDrops = user.lastDrops?.filter((ts) => now - ts < HOUR) || []; // Added null check
+        if ((user.lastDrops?.length || 0) >= 10) { // Added null check
           user.cooldownEnd = now + HOUR;
           try {
             await db.write();
@@ -67,7 +68,7 @@ module.exports = {
       }
 
       const remaining =
-        dropperId === BYPASS_USER_ID ? 'unlimited' : 10 - (user.lastDrops?.length || 0);
+        dropperId === BYPASS_USER_ID ? 'unlimited' : 10 - (user.lastDrops?.length || 0); // Added null check
 
       // pick rarity→card
       const { rarity } = getRarity();
@@ -132,9 +133,10 @@ module.exports = {
         try {
           const claimerId = reactor.id;
           await db.read();
-          let claimer = db.data.users[claimerId];
+          let claimer = db.data?.users?.[claimerId]; // Added null/undefined checks with optional chaining
           if (!claimer) {
             claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 }; // changed here too
+            if (!db.data) db.data = { users: {} }; // Ensure db.data exists
             db.data.users[claimerId] = claimer;
             console.log(`Creating new user (claimer): ${claimerId}`); // Added logging
           }
