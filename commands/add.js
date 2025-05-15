@@ -1,73 +1,68 @@
 const { EmbedBuilder } = require('discord.js');
+const { nanoid } = require('nanoid');
 const BYPASS_USER_ID = '722463127782031400';
 
 module.exports = {
   name: 'add',
-  description: 'Admin: Add a card to a user manually',
+  description: 'Admin-only command to add a specific card to a user by group ID (e.g. 3.1.4)',
   async execute(message, args, { db, cards }) {
     if (message.author.id !== BYPASS_USER_ID) {
       return message.reply("❌ You don't have permission to use this command.");
     }
 
-    const [groupId, conditionArg, mention] = args;
-
-    if (!groupId || !conditionArg || !mention) {
-      return message.reply("Usage: `!add <cardId> <condition> <@user>`");
+    const [groupId, mention] = args;
+    if (!groupId || !mention) {
+      return message.reply("Usage: `!add <groupId> @user` (e.g. `!add 3.1.4 @user`)");
     }
 
-    const condition = capitalize(conditionArg);
-    const allowedConditions = ['Poor', 'Average', 'Great'];
-    if (!allowedConditions.includes(condition)) {
-      return message.reply("Condition must be one of: Poor, Average, Great");
+    const match = groupId.match(/^(\d+)\.(\d)\.(\d)$/);
+    if (!match) {
+      return message.reply("❌ Invalid group ID format. Use `cardId.shiny.condition` (e.g. `3.1.4`)");
     }
 
-    const match = mention.match(/^<@!?(\d+)>$/);
-    if (!match) return message.reply("Invalid user mention format.");
-    const targetUserId = match[1];
+    const [, cardId, shinyCode, conditionCode] = match;
+    const shiny = shinyCode === '1';
+    const condition = conditionCode === '3' ? 'Poor'
+                    : conditionCode === '4' ? 'Great'
+                    : 'Average';
 
-    const card = cards.find(c => c.id === groupId);
-    if (!card) return message.reply("❌ No card found with that ID.");
+    const baseCard = cards.find(c => c.id === cardId);
+    if (!baseCard) {
+      return message.reply(`❌ No card found with ID \`${cardId}\`.`);
+    }
 
-    const { nanoid } = await import('nanoid');
-
+    const userId = mention.replace(/[<@!>]/g, '');
     await db.read();
-    let targetUser = db.data.users?.[targetUserId];
-    if (!targetUser) {
-      targetUser = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
-      if (!db.data.users) db.data.users = {};
-      db.data.users[targetUserId] = targetUser;
+    if (!db.data.users[userId]) {
+      db.data.users[userId] = {
+        lastDrops: [],
+        cooldownEnd: 0,
+        inventory: [],
+        balance: 0
+      };
     }
 
-    const isShiny = false;
-    const baseValue = card.value;
-    const modifier = { Poor: -0.15, Great: 0.15, Average: 0 }[condition];
-    const finalValue = Math.ceil(baseValue * (1 + modifier));
-
-    targetUser.inventory.push({
-      cardId: card.id,
+    db.data.users[userId].inventory.push({
+      cardId,
       instanceId: nanoid(),
-      shiny: isShiny,
+      shiny,
       condition,
-      acquired: Date.now(),
+      acquired: Date.now()
     });
 
     await db.write();
 
+    const sparkle = shiny ? '✨' : '';
     const embed = new EmbedBuilder()
       .setTitle(`✅ Card Added`)
-      .setDescription(`**${card.title}** (${card.rarity}) added to <@${targetUserId}>`)
-      .addFields(
-        { name: 'Card ID', value: card.id, inline: true },
-        { name: 'Condition', value: condition, inline: true },
-        { name: 'Value', value: `${finalValue}₩`, inline: true }
+      .setDescription(
+        `Gave <@${userId}> the card **${baseCard.title}** ${sparkle}\n` +
+        `Condition: **${condition}**`
       )
-      .setThumbnail(card.image)
-      .setColor(0x00cc99);
+      .setImage(baseCard.image)
+      .setColor(0x00ff00)
+      .setFooter({ text: `ID: ${groupId}` });
 
-    return message.reply({ embeds: [embed] });
+    message.channel.send({ embeds: [embed] });
   }
 };
-
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
