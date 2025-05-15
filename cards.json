@@ -194,5 +194,12 @@
     "rarity": "Common",
     "image": "https://cdn.discordapp.com/attachments/1035347089569370193/1370211426089828362/Screenshot_2025-05-08_9.26.27_PM.png?ex=681eac55&is=681d5ad5&hm=70593a8030bc166dc86ab31aa6dfd86284eac36a6380cfcb5a55713747436769&",
     "value": 24
+  },
+  {
+    "id": "card29",
+    "title": "Holy Dragon",
+    "rarity": "Secret",
+    "image": "https://media.discordapp.net/attachments/1232456074582556712/1372698910912544828/image.jpg?ex=6827b8fb&is=6826677b&hm=3a7c9c8db1658645c829c9a49a76d0aede75eb2f85fb02cb77555da1b2bb03d7&=&format=webp&width=1780&height=1780",
+    "value": 5000
   }
 ]
