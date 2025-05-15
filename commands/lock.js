@@ -8,10 +8,6 @@ module.exports = {
         await db.read();
         const userId = message.author.id;
 
-        if (message.author.id !== 'YOUR_DISCORD_ID') { // Replace with your admin ID
-            return message.reply("❌ You don't have permission to use this command.");
-        }
-
         const input = args[0];
         if (!input) {
             return message.reply("Usage: `!lock <groupId|cardId>`\nExamples: `!lock 5.1.3`, `!lock card5.0.2`, `!lock 5`");
