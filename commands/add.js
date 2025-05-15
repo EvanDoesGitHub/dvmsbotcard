@@ -4,7 +4,7 @@ module.exports = {
     name: 'add',
     description: 'Admin-only command to add a specific card to a user by group ID (e.g. 3.1.4)',
     async execute(message, args, { db, cards }) {
-        if (message.author.id !== '722463127782031400') {
+        if (message.author.id !== 'YOUR_DISCORD_ID') { // Make sure to replace this!
             return message.reply("❌ You don't have permission to use this command.");
         }
 
@@ -19,12 +19,12 @@ module.exports = {
         }
 
         const [, cardIdRaw, shinyCode, conditionCode] = match;
-        // Ensure cardId has the 'card' prefix to match your sell command logic
         const cardId = `card${cardIdRaw}`;
         const shiny = shinyCode === '1';
         const condition = conditionCode === '3' ? 'Poor'
             : conditionCode === '4' ? 'Great'
-                : 'Average';
+            : conditionCode === '1' ? 'Average' // Add mapping for '1'
+            : 'Average'; // Default to Average if no match
 
         const baseCard = cards.find(c => c.id === cardId);
         if (!baseCard) {
@@ -42,7 +42,6 @@ module.exports = {
             };
         }
 
-        // Dynamically import nanoid
         const { nanoid } = await import('nanoid');
 
         db.data.users[userId].inventory.push({
