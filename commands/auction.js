@@ -3,9 +3,10 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: 'auction',
     description: 'Start, bid in, or stop an auction:\n' +
-        '`!auction start <groupId> <startingPrice> <durationSeconds>`\n' +
+        '`!auction start <groupId> <startingPrice> <duration>`\n' +
         '`!auction bid <auctionId> <amount>`\n' +
-        '`!auction stop <auctionId>` (owner only)',
+        '`!auction stop <auctionId>` (owner only)\n' +
+        '  - Duration can be specified like: 1w, 2d, 3h, 4m, 5s.  Example: 1w2d3h',
     async execute(message, args, { cards, db }) {
         await db.read();
         const userId = message.author.id;
@@ -13,14 +14,15 @@ module.exports = {
 
         // helper to parse groupId (cardX.Y.Z or X.Y.Z)
         function parseGroupId(input) {
-            const parts = input.split('.');
-            if (parts.length !== 3) return null;
-            const [raw, shinyCode, condCode] = parts;
-            return {
-                cardId: raw.startsWith('card') ? raw : `card${raw}`,
-                shiny: shinyCode === '1',
-                condition: condCode === '3' ? 'Poor' : condCode === '4' ? 'Great' : 'Average'
-            };
+            const match = input.match(/^(\d+)\.(\d)\.(\d)$/);
+            if (!match) return null;
+            const [, cardIdRaw, shinyCode, conditionCode] = match;
+            const cardId = `card${cardIdRaw}`;
+            const shiny = shinyCode === '1';
+            const condition = conditionCode === '3' ? 'Poor'
+                : conditionCode === '4' ? 'Great'
+                : 'Average';
+            return { cardId, shiny, condition };
         }
 
         // ENSURE auctions key exists
@@ -30,10 +32,10 @@ module.exports = {
         if (sub === 'start') {
             const groupId = args[1];
             const startPrice = parseInt(args[2], 10);
-            const durationSec = parseInt(args[3], 10);
+            const durationStr = args[3];
 
-            if (!groupId || isNaN(startPrice) || isNaN(durationSec) || durationSec <= 0) {
-                return message.reply('Usage: `!auction start <groupId> <startingPrice> <durationSeconds>`');
+            if (!groupId || isNaN(startPrice) || !durationStr) {
+                return message.reply('Usage: `!auction start <groupId> <startingPrice> <duration>` (e.g., `!auction start 3.1.4 100 1w2d3h`)');
             }
 
             // Validate startPrice
@@ -41,14 +43,32 @@ module.exports = {
                 return message.reply('Starting price must be at least 1.');
             }
 
-            // Validate duration
-            if (durationSec < 10 || durationSec > 86400) {
+            // Parse duration string
+            const durationRegex = /(\d+)([wdhms])/gi;
+            let totalSeconds = 0;
+            let match;
+            while ((match = durationRegex.exec(durationStr)) !== null) {
+                const value = parseInt(match[1], 10);
+                const unit = match[2].toLowerCase();
+                switch (unit) {
+                    case 'w': totalSeconds += value * 60 * 60 * 24 * 7; break;
+                    case 'd': totalSeconds += value * 60 * 60 * 24; break;
+                    case 'h': totalSeconds += value * 60 * 60; break;
+                    case 'm': totalSeconds += value * 60; break;
+                    case 's': totalSeconds += value; break;
+                }
+            }
+
+            // Validate totalSeconds
+            if (totalSeconds < 10 || totalSeconds > 86400) {
                 return message.reply('Duration must be between 10 seconds and 24 hours (86400 seconds).');
             }
+            const durationSec = totalSeconds;
+
             // find card in your inventory
             const user = db.data.users[userId] ||= { inventory: [], balance: 0 };
             const info = parseGroupId(groupId);
-            if (!info) return message.reply('Invalid group ID format. Use `<cardId>.<shiny>.<condition>`');
+            if (!info) return message.reply('Invalid group ID format. Use `<cardId>.<shiny>.<condition>` (e.g., `3.1.4`)');
 
             const cardToAuction = user.inventory.find(c =>
                 c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition
@@ -91,7 +111,7 @@ module.exports = {
                 .addFields(
                     { name: 'Auction ID', value: auctionId, inline: true },
                     { name: 'Start Price', value: `${startPrice}₩`, inline: true },
-                    { name: 'Duration', value: `${durationSec}s`, inline: true },
+                    { name: 'Duration', value: `${durationStr}`, inline: true }, // Show the user's input
                     { name: 'Seller', value: `<@${userId}>`, inline: true }, // Add seller
                 )
                 .setImage(baseCard.image) // Add card image
@@ -183,3 +203,4 @@ module.exports = {
         }
     }
 };
+
