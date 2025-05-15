@@ -1,12 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
-const { nanoid } = require('nanoid');
-const BYPASS_USER_ID = '722463127782031400';
 
 module.exports = {
   name: 'add',
   description: 'Admin-only command to add a specific card to a user by group ID (e.g. 3.1.4)',
   async execute(message, args, { db, cards }) {
-    if (message.author.id !== BYPASS_USER_ID) {
+    if (message.author.id !== '722463127782031400') {
       return message.reply("❌ You don't have permission to use this command.");
     }
 
@@ -23,8 +21,8 @@ module.exports = {
     const [, cardId, shinyCode, conditionCode] = match;
     const shiny = shinyCode === '1';
     const condition = conditionCode === '3' ? 'Poor'
-                    : conditionCode === '4' ? 'Great'
-                    : 'Average';
+      : conditionCode === '4' ? 'Great'
+        : 'Average';
 
     const baseCard = cards.find(c => c.id === cardId);
     if (!baseCard) {
@@ -41,6 +39,9 @@ module.exports = {
         balance: 0
       };
     }
+
+    // Dynamically import nanoid
+    const { nanoid } = await import('nanoid');
 
     db.data.users[userId].inventory.push({
       cardId,
