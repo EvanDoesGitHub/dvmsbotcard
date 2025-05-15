@@ -4,7 +4,7 @@ module.exports = {
     name: 'add',
     description: 'Admin-only command to add a specific card to a user by group ID (e.g. 3.1.4)',
     async execute(message, args, { db, cards }) {
-        if (message.author.id !== 'YOUR_DISCORD_ID') { // Make sure to replace this!
+        if (message.author.id !== '722463127782031400') { // Make sure to replace this!
             return message.reply("❌ You don't have permission to use this command.");
         }
 
