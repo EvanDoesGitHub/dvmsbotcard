@@ -15,13 +15,17 @@ module.exports = {
         // helper to parse groupId (cardX.Y.Z or X.Y.Z)
         function parseGroupId(input) {
             const match = input.match(/^(\d+)\.(\d)\.(\d)$/);
-            if (!match) return null;
+            if (!match) {
+                console.log(`parseGroupId: Invalid input format: ${input}`);
+                return null;
+            }
             const [, cardIdRaw, shinyCode, conditionCode] = match;
             const cardId = `card${cardIdRaw}`;
             const shiny = shinyCode === '1';
             const condition = conditionCode === '3' ? 'Poor'
                 : conditionCode === '4' ? 'Great'
                 : 'Average';
+            console.log(`parseGroupId: Parsed cardId: ${cardId}, shiny: ${shiny}, condition: ${condition}`);
             return { cardId, shiny, condition };
         }
 
@@ -35,11 +39,13 @@ module.exports = {
             const durationStr = args[3];
 
             if (!groupId || isNaN(startPrice) || !durationStr) {
+                console.log(`!auction start: Invalid arguments. groupId: ${groupId}, startPrice: ${startPrice}, durationStr: ${durationStr}`);
                 return message.reply('Usage: `!auction start <groupId> <startingPrice> <duration>` (e.g., `!auction start 3.1.4 100 1w2d3h`)');
             }
 
             // Validate startPrice
             if (startPrice < 1) {
+                console.log(`!auction start: startPrice is less than 1: ${startPrice}`);
                 return message.reply('Starting price must be at least 1.');
             }
 
@@ -61,6 +67,7 @@ module.exports = {
 
             // Validate totalSeconds
             if (totalSeconds < 10 || totalSeconds > 86400) {
+                console.log(`!auction start: Invalid duration: ${totalSeconds}`);
                 return message.reply('Duration must be between 10 seconds and 24 hours (86400 seconds).');
             }
             const durationSec = totalSeconds;
@@ -68,13 +75,20 @@ module.exports = {
             // find card in your inventory
             const user = db.data.users[userId] ||= { inventory: [], balance: 0 };
             const info = parseGroupId(groupId);
-            if (!info) return message.reply('Invalid group ID format. Use `<cardId>.<shiny>.<condition>` (e.g., `3.1.4`)');
+            if (!info) {
+                console.log(`!auction start: Invalid groupId: ${groupId}`);
+                return message.reply('Invalid group ID format. Use `<cardId>.<shiny>.<condition>` (e.g., `3.1.4`)');
+            }
+
+            console.log(`!auction start: User inventory:`, user.inventory);
+            console.log(`!auction start: Parsed card info:`, info);
 
             const cardToAuction = user.inventory.find(c =>
                 c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition
             );
 
             if (!cardToAuction) {
+                console.log(`!auction start: Card not found in inventory. groupId: ${groupId}, info:`, info);
                 return message.reply(`You don't have any **${groupId}** to auction.`);
             }
 
@@ -82,7 +96,9 @@ module.exports = {
             const newInventory = user.inventory.filter(c => !(c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition));
             if (newInventory.length !== user.inventory.length - 1) {
                 user.inventory = newInventory;
+                console.log(`!auction start: Card removed from inventory. New inventory:`, newInventory);
             } else {
+                console.log(`!auction start: Card not removed from inventory.  This should not happen. groupId: ${groupId}, info:`, info);
                 return message.reply(`You don't have any **${groupId}** to auction.`);
             }
             await db.write();
@@ -116,7 +132,7 @@ module.exports = {
                 )
                 .setImage(baseCard.image) // Add card image
                 .setColor(0x00AE86);
-
+            console.log(`!auction start: Auction started:`, db.data.auctions[auctionId]);
             return message.channel.send({ embeds: [embed] });
         }
 
