@@ -91,9 +91,10 @@ module.exports = {
                 console.log(`!auction start: Card not found in inventory. groupId: ${groupId}, info:`, info);
                 return message.reply(`You don't have any **${groupId}** to auction.`);
             }
+            const cardInstanceId = cardToAuction.instanceId; //store instanceId
 
             // pull the card out of inventory
-            const newInventory = user.inventory.filter(c => !(c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition));
+            const newInventory = user.inventory.filter(c => !(c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition && c.instanceId === cardInstanceId)); // added instanceId check
             if (newInventory.length !== user.inventory.length - 1) {
                 user.inventory = newInventory;
                 console.log(`!auction start: Card removed from inventory. New inventory:`, newInventory);
