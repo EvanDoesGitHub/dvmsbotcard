@@ -1,5 +1,4 @@
 const { EmbedBuilder } = require('discord.js');
-const moment = require('moment'); // Import moment.js
 
 module.exports = {
     name: 'auction',
@@ -68,10 +67,10 @@ module.exports = {
             }
 
             // Validate totalSeconds
-            const maxDuration = moment.duration(1, 'months').asSeconds();
+            const maxDuration = 30 * 24 * 60 * 60; // 30 days in seconds
             if (totalSeconds < 10 || totalSeconds > maxDuration) {
                 console.log(`!auction start: Invalid duration: ${totalSeconds}`);
-                return message.reply('Duration must be between 10 seconds and 1 month.');
+                return message.reply('Duration must be between 10 seconds and 30 days.');
             }
             const durationSec = totalSeconds;
             console.log(`!auction start: Calculated duration in seconds: ${durationSec}`); // Added logging
@@ -112,6 +111,7 @@ module.exports = {
             const { nanoid } = await import('nanoid'); // Dynamically import nanoid
             const auctionId = nanoid();
             const now = Date.now();
+            const expiresAt = now + durationSec * 1000;
             db.data.auctions[auctionId] = {
                 id: auctionId,
                 seller: userId,
@@ -119,7 +119,7 @@ module.exports = {
                 highestBid: startPrice,
                 highestBidder: null,
                 deposits: {},
-                expiresAt: now + durationSec * 1000,
+                expiresAt: expiresAt,
                 ended: false
             };
             await db.write();
@@ -224,4 +224,3 @@ module.exports = {
         }
     }
 };
-
