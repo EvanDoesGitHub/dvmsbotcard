@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const moment = require('moment'); // Import moment.js
 
 module.exports = {
     name: 'auction',
@@ -63,14 +64,17 @@ module.exports = {
                     case 'm': totalSeconds += value * 60; break;
                     case 's': totalSeconds += value; break;
                 }
+                console.log(`!auction start: Parsed duration part: value: ${value}, unit: ${unit}, totalSeconds: ${totalSeconds}`); // Added logging
             }
 
             // Validate totalSeconds
-            if (totalSeconds < 10 || totalSeconds > 86400) {
+            const maxDuration = moment.duration(1, 'months').asSeconds();
+            if (totalSeconds < 10 || totalSeconds > maxDuration) {
                 console.log(`!auction start: Invalid duration: ${totalSeconds}`);
-                return message.reply('Duration must be between 10 seconds and 24 hours (86400 seconds).');
+                return message.reply('Duration must be between 10 seconds and 1 month.');
             }
             const durationSec = totalSeconds;
+            console.log(`!auction start: Calculated duration in seconds: ${durationSec}`); // Added logging
 
             // find card in your inventory
             const user = db.data.users[userId] ||= { inventory: [], balance: 0 };
