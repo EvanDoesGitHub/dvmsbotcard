@@ -89,6 +89,7 @@ module.exports = {
                         playerHand.push(getCard());
                         playerValue = getHandValue(playerHand);
                         console.log(`Player Hand: ${playerHand.join(' ')}, Player Value: ${playerValue}`); // Log player hand and value
+                        console.log(`Before setFields (hit): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
                         embed.setFields(
                             { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                             { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
@@ -122,6 +123,7 @@ module.exports = {
                         dealerValue = getHandValue(dealerHand);
                         console.log(`Dealer Hand: ${dealerHand.join(' ')}, Dealer Value: ${dealerValue}`); // Log dealer hand and value
                     }
+                    console.log(`Before setFields (end): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
                     embed.setFields(
                         { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                         { name: 'Dealer Hand', value: dealerHand.join(' '), inline: true },
