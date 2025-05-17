@@ -71,7 +71,7 @@ module.exports = {
         dropperId === BYPASS_USER_ID ? 'unlimited' : 10 - (user.lastDrops?.length || 0); // Added null check
 
       // pick rarity→card
-      const { rarity } = getRarity();
+      const { rarity } = getRarity(user); // Pass the user object to getRarity
       // **Crucial Check:** Make sure 'cards' is an array before filtering
       if (!Array.isArray(cards)) {
         console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
@@ -187,15 +187,34 @@ module.exports = {
 };
 
 // Helpers
-function getRarity() {
+function getRarity(user) { // Added user parameter
   const n = Math.random() * 100;
-  if (n < 0.05) return { rarity: 'Secret' };
-  if (n < 0.5) return { rarity: 'Mythic' };
-  if (n < 2.5) return { rarity: 'Legendary' };
-  if (n < 10) return { rarity: 'Epic' };
-  if (n < 20) return { rarity: 'Rare' };
-  if (n < 40) return { rarity: 'Uncommon' };
-  return { rarity: 'Common' };
+  let rarity;
+
+  if (user?.luckBoost?.multiplier === 5) { // 5x boost: increased chances, no commons/uncommons
+    if (n < 0.1) rarity = 'Secret';         //was 0.05
+    else if (n < 0.8) rarity = 'Mythic';    //was 0.5
+    else if (n < 4) rarity = 'Legendary';   //was 2.5
+    else if (n < 15) rarity = 'Epic';      //was 10
+    else if (n < 30) rarity = 'Rare';      //was 20
+    else rarity = 'Rare';                  // make sure it doesnt return undefined
+  } else if (user?.luckBoost?.multiplier === 2) { // 2x boost: no commons
+    if (n < 0.05) rarity = 'Secret';
+    else if (n < 0.5) rarity = 'Mythic';
+    else if (n < 2.5) rarity = 'Legendary';
+    else if (n < 10) rarity = 'Epic';
+    else if (n < 20) rarity = 'Rare';
+    else rarity = 'Uncommon';
+  } else {
+    if (n < 0.05) rarity = 'Secret';
+    else if (n < 0.5) rarity = 'Mythic';
+    else if (n < 2.5) rarity = 'Legendary';
+    else if (n < 10) rarity = 'Epic';
+    else if (n < 20) rarity = 'Rare';
+    else if (n < 40) rarity = 'Uncommon';
+    else rarity = 'Common';
+  }
+  return { rarity };
 }
 function randomCondition() {
   const a = ['Poor', 'Average', 'Great'];
