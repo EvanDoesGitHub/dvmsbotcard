@@ -47,13 +47,13 @@ module.exports = {
                 await message.channel.send('Flipping animation stopped due to an error.');
                 return;
             }
-        }, 1000);
+        }, 250); // Changed to 250ms for 4x faster animation
 
         // 5-second delay using a Promise
         await new Promise(resolve => setTimeout(resolve, 5000));
         clearInterval(intervalId); // Clear the interval after the delay
 
-        try{
+        try {
             if (flip === 0) {
                 // User wins: double their money
                 db.data.users[userId].balance += amount;
@@ -65,7 +65,7 @@ module.exports = {
                 await db.write();
                 await flippingMessage.edit(`😢 It's ${result}! You lose ${amount}₩ and now have ${db.data.users[userId].balance}₩.`);  //edit
             }
-        } catch(error){
+        } catch (error) {
             console.error("Error editing message:", error);
             await message.channel.send('An error occurred while displaying the result.');
         }
