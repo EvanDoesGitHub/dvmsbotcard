@@ -88,6 +88,7 @@ module.exports = {
                     if (input === 'hit') {
                         playerHand.push(getCard());
                         playerValue = getHandValue(playerHand);
+                        console.log(`Player Hand: ${playerHand.join(' ')}, Player Value: ${playerValue}`); // Log player hand and value
                         embed.setFields(
                             { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                             { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
@@ -119,6 +120,7 @@ module.exports = {
                     while (dealerValue < 17) {
                         dealerHand.push(getCard());
                         dealerValue = getHandValue(dealerHand);
+                        console.log(`Dealer Hand: ${dealerHand.join(' ')}, Dealer Value: ${dealerValue}`); // Log dealer hand and value
                     }
                     embed.setFields(
                         { name: 'Your Hand', value: playerHand.join(' '), inline: true },
@@ -126,6 +128,7 @@ module.exports = {
                         { name: 'Your Points', value: playerValue, inline: true },
                         { name: 'Dealer Points', value: dealerValue, inline: true },
                     );
+                    console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);  //important
                     if (playerValue > 21) {
                         resultEmbed = new EmbedBuilder()
                             .setTitle('You Busted!')
