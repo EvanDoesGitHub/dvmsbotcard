@@ -1,0 +1,40 @@
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'boost',
+    description: 'Check your active boost and how long it lasts.',
+    async execute(message, args, { db }) {
+        await db.read();
+        const userId = message.author.id;
+        const user = db.data.users[userId];
+
+        if (!user || !user.luckBoost) {
+            return message.reply('You do not have an active boost.');
+        }
+
+        const now = Date.now();
+        const expiresAt = user.luckBoost.expiresAt;
+
+        if (now >= expiresAt) {
+            // Clear the expired boost
+            user.luckBoost = null;
+            await db.write();
+            return message.reply('Your boost has expired.');
+        }
+
+        const remaining = expiresAt - now;
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+        const embed = new EmbedBuilder()
+            .setTitle('Active Boost')
+            .setDescription(`You have an active **${user.luckBoost.multiplier}x** boost.`)
+            .addFields(
+                { name: 'Expires In', value: `${hours}h ${minutes}m ${seconds}s` }
+            )
+            .setColor(0xF1C40F); // Gold color
+
+        return message.channel.send({ embeds: [embed] });
+    },
+};
