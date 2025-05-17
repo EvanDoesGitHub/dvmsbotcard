@@ -19,7 +19,7 @@ module.exports = {
                 console.log(`parseGroupId: Invalid input format: ${input}`);
                 return null;
             }
-            const [, cardIdRaw, shinyCode, conditionCode] = match;
+            const [ , cardIdRaw, shinyCode, conditionCode] = match;
             const cardId = `card${cardIdRaw}`;
             const shiny = shinyCode === '1';
             const condition = conditionCode === '3' ? 'Poor'
