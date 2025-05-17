@@ -69,7 +69,7 @@ module.exports = {
                 .addFields(
                     { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                     { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
-                    { name: 'Your Points', value: playerValue, inline: true },
+                    { name: 'Your Points', value: String(playerValue), inline: true },
                     { name: 'Dealer Points', value: '?', inline: true },
                 )
                 .setFooter({ text: 'Type `hit` or `stand`' });
@@ -90,7 +90,7 @@ module.exports = {
                         playerValue = getHandValue(playerHand);
                         console.log(`Player Hand: ${playerHand.join(' ')}, Player Value: ${playerValue}`); // Log player hand and value
                         console.log(`Before setFields (hit): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
-                        const playerPointsValue = isNaN(playerValue) ? '?' : playerValue;
+                        const playerPointsValue = isNaN(playerValue) ? '?' : String(playerValue);
                         embed.setFields(
                             { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                             { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
@@ -126,8 +126,8 @@ module.exports = {
                     }
                     console.log(`Before setFields (end): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
                     // Check if dealerValue is a valid number
-                    const dealerPointsValue = isNaN(dealerValue) ? '?' : dealerValue;
-                    const playerPointsValue = isNaN(playerValue) ? '?' : playerValue;
+                    const dealerPointsValue = isNaN(dealerValue) ? '?' : String(dealerValue);
+                    const playerPointsValue = isNaN(playerValue) ? '?' : String(playerValue);
                     embed.setFields(
                         { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                         { name: 'Dealer Hand', value: dealerHand.join(' '), inline: true },
