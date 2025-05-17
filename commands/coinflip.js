@@ -21,19 +21,53 @@ module.exports = {
         const flip = Math.floor(Math.random() * 2);
         const result = flip === 0 ? 'Heads' : 'Tails';
 
+        // Send the initial message
+        const flippingMessage = await message.reply('Flipping coin.');
+
+        // Array of dot variations for the animation
+        const dots = [
+            'Flipping coin.',
+            'Flipping coin..',
+            'Flipping coin...',
+            'Flipping coin..',
+            'Flipping coin.',
+            'Flipping coin',
+        ];
+
+        // Edit the message every second to create the animation
+        let dotIndex = 0;
+        const intervalId = setInterval(async () => {
+            try {
+                await flippingMessage.edit(dots[dotIndex]);
+                dotIndex = (dotIndex + 1) % dots.length; // Cycle through the dots array
+            } catch (error) {
+                console.error("Error editing message:", error);
+                clearInterval(intervalId); // Stop the interval if there's an error
+                // Optionally send a message to the channel indicating the animation stopped
+                await message.channel.send('Flipping animation stopped due to an error.');
+                return;
+            }
+        }, 1000);
+
         // 5-second delay using a Promise
         await new Promise(resolve => setTimeout(resolve, 5000));
+        clearInterval(intervalId); // Clear the interval after the delay
 
-        if (flip === 0) {
-            // User wins: double their money
-            db.data.users[userId].balance += amount;
-            await db.write();
-            message.reply(`🎉 It's ${result}! You win ${amount}₩ and now have ${db.data.users[userId].balance}₩.`);
-        } else {
-            // User loses: lose the money
-            db.data.users[userId].balance -= amount;
-            await db.write();
-            message.reply(`😢 It's ${result}! You lose ${amount}₩ and now have ${db.data.users[userId].balance}₩.`);
+        try{
+            if (flip === 0) {
+                // User wins: double their money
+                db.data.users[userId].balance += amount;
+                await db.write();
+                await flippingMessage.edit(`🎉 It's ${result}! You win ${amount}₩ and now have ${db.data.users[userId].balance}₩.`); //edit
+            } else {
+                // User loses: lose the money
+                db.data.users[userId].balance -= amount;
+                await db.write();
+                await flippingMessage.edit(`😢 It's ${result}! You lose ${amount}₩ and now have ${db.data.users[userId].balance}₩.`);  //edit
+            }
+        } catch(error){
+            console.error("Error editing message:", error);
+            await message.channel.send('An error occurred while displaying the result.');
         }
     },
 };
