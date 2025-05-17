@@ -6,6 +6,7 @@ module.exports = {
         '`!auction start <groupId> <startingPrice> <duration>`\n' +
         '`!auction bid <auctionId> <amount>`\n' +
         '`!auction stop <auctionId>` (owner only)\n' +
+        '`!auction view`\n' + // Added view
         '  - Duration can be specified like: 1w, 2d, 3h, 4m, 5s.  Example: 1w2d3h',
     async execute(message, args, { cards, db }) {
         await db.read();
@@ -28,9 +29,9 @@ module.exports = {
             const shiny = match[2] === '1';
             const condition = match[3] === '3' ? 'Poor' : match[3] === '4' ? 'Great' : 'Average';
 
-             if (!cardId.startsWith('card')) {
+            if (!cardId.startsWith('card')) {
                 cardId = `card${cardId}`;
-             }
+            }
             return { cardId, shiny, condition };
         }
 
@@ -217,8 +218,43 @@ module.exports = {
             return message.channel.send(`✅ Auction \`${auctionId}\` has been stopped.`);
         }
 
+        // --- View Auctions ---
+        if (subCommand === 'view') {
+            const auctions = db.data.auctions;
+
+            if (!auctions || Object.keys(auctions).length === 0) {
+                return message.reply('There are currently no active auctions.');
+            }
+
+            const embeds = [];
+            for (const auctionId in auctions) {
+                const auction = auctions[auctionId];
+                if (!auction.ended) { //show only not ended auctions
+                    const baseCard = cards.find(c => c.id === auction.card.cardId); //find base card
+                    const shinyText = auction.card.shiny ? '✨' : '';
+                    const timeRemaining = Math.ceil((auction.expiresAt - Date.now()) / 1000);
+                    const timeString = timeRemaining > 0 ? `${timeRemaining} seconds` : 'Expired';
+
+                    const embed = new EmbedBuilder()
+                        .setTitle(`🏷️ Auction: ${baseCard.title} ${shinyText}`)
+                        .setDescription(`Auction ID: ${auction.id}\nSeller: <@${auction.seller}>\n` +
+                            `Current Highest Bid: ${auction.highestBid}₩\nHighest Bidder: ${auction.highestBidder ? `<@${auction.highestBidder}>` : 'None'}`)
+                        .setImage(baseCard.image)
+                        .addFields(
+                            { name: 'Expires In', value: timeString, inline: true },
+                        )
+                        .setColor(0x00AE86);
+                    embeds.push(embed);
+                }
+            }
+            if (embeds.length === 0) {
+                return message.reply('There are currently no active auctions.');
+            }
+
+            return message.channel.send({ embeds: embeds });
+        }
+
         // --- Invalid Subcommand ---
-        return message.reply('Invalid subcommand. Use `start`, `bid`, or `stop`.');
+        return message.reply('Invalid subcommand. Use `start`, `bid`, `stop`, or `view`.');
     },
 };
-
