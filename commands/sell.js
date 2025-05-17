@@ -30,7 +30,6 @@ module.exports = {
             }
             toSell = user.inventory.slice(); // Create a copy to avoid modifying the original array directly
         } else {
-
             const parts = input.split('.');
             let candidates;
 
@@ -73,10 +72,35 @@ module.exports = {
                 toSell = candidates.slice(0, count);
             }
         }
-        const removeIds = new Set(toSell.map(c => c.instanceId));
+        // Check for locked cards
+        const lockedCards = db.data.lockedCards || [];
+        const sellableCards = [];
+        for (const card of toSell) {
+            const cardIdentifier = `${card.cardId}.${card.shiny ? '1' : '0'}.${card.condition === 'Poor' ? '3' : card.condition === 'Great' ? '4' : '2'}`;
+            const genericCardIdentifier = `${card.cardId}.*.${card.condition === 'Poor' ? '3' : card.condition === 'Great' ? '4' : '2'}`;
+            const genericShinyIdentifier = `${card.cardId}.${card.shiny ? '1' : '0'}.*`;
+            const veryGenericCardIdentifier = `${card.cardId}.*.${'*'}`;
+
+            if (
+                !lockedCards.includes(cardIdentifier) &&
+                !lockedCards.includes(genericCardIdentifier) &&
+                !lockedCards.includes(genericShinyIdentifier) &&
+                !lockedCards.includes(veryGenericCardIdentifier)
+            ) {
+                sellableCards.push(card);
+            }
+            else{
+                 message.reply(`Card ${card.cardId} is locked and cannot be sold.`);
+            }
+        }
+        if (sellableCards.length === 0) {
+            return message.reply("All the cards you selected are locked.");
+        }
+
+        const removeIds = new Set(sellableCards.map(c => c.instanceId));
         user.inventory = user.inventory.filter(c => !removeIds.has(c.instanceId));
 
-        const totalValue = toSell.reduce((sum, c) => {
+        const totalValue = sellableCards.reduce((sum, c) => {
             const baseCard = cards.find(card => card.id === c.cardId);
             if (!baseCard) return sum;
             let value = baseCard.value;
@@ -89,12 +113,12 @@ module.exports = {
         user.balance = (user.balance || 0) + totalValue;
         await db.write();
 
-        const first = toSell[0];
+        const first = sellableCards[0];
         const cardInfo = cards.find(c => c.id === first.cardId);
         const embed = new EmbedBuilder()
-            .setTitle(`🪙 Sold ${toSell.length}× ${cardInfo.title}`)
+            .setTitle(`🪙 Sold ${sellableCards.length}× ${cardInfo.title}`)
             .setDescription(
-                `You sold ${toSell.length} card(s) for **${totalValue}₩**.\n` +
+                `You sold ${sellableCards.length} card(s) for **${totalValue}₩**.\n` +
                 `💰 New Balance: **${user.balance}₩**`
             )
             .setColor(0xFFD700);
