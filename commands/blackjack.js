@@ -90,10 +90,11 @@ module.exports = {
                         playerValue = getHandValue(playerHand);
                         console.log(`Player Hand: ${playerHand.join(' ')}, Player Value: ${playerValue}`); // Log player hand and value
                         console.log(`Before setFields (hit): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
+                        const playerPointsValue = isNaN(playerValue) ? '?' : playerValue;
                         embed.setFields(
                             { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                             { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
-                            { name: 'Your Points', value: playerValue, inline: true },
+                            { name: 'Your Points', value: playerPointsValue, inline: true },
                             { name: 'Dealer Points', value: '?', inline: true },
                         );
                         gameMessage.edit({ embeds: [embed] });
@@ -126,11 +127,11 @@ module.exports = {
                     console.log(`Before setFields (end): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
                     // Check if dealerValue is a valid number
                     const dealerPointsValue = isNaN(dealerValue) ? '?' : dealerValue;
-
+                    const playerPointsValue = isNaN(playerValue) ? '?' : playerValue;
                     embed.setFields(
                         { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                         { name: 'Dealer Hand', value: dealerHand.join(' '), inline: true },
-                        { name: 'Your Points', value: playerValue, inline: true },
+                        { name: 'Your Points', value: playerPointsValue, inline: true },
                         { name: 'Dealer Points', value: dealerPointsValue, inline: true },
                     );
                     console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);  //important
