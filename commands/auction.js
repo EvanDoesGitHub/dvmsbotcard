@@ -1,5 +1,4 @@
 const { EmbedBuilder } = require('discord.js');
-const { nanoid } = require('nanoid'); // For generating unique IDs
 
 module.exports = {
     name: 'auction',
@@ -97,7 +96,7 @@ module.exports = {
             await db.write();
 
             // Create the auction
-            const auctionId = nanoid();
+            const auctionId = await import('nanoid').then(nanoid => nanoid.nanoid()); // Dynamically import nanoid
             const expiresAt = Date.now() + durationSeconds * 1000;
             const newAuction = {
                 id: auctionId,
@@ -218,3 +217,4 @@ module.exports = {
         return message.reply('Invalid subcommand. Use `start`, `bid`, or `stop`.');
     },
 };
+
