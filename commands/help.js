@@ -10,7 +10,8 @@ const SECTIONS = [
       { cmd: '`!mygroups`',     desc: 'List your distinct group IDs (for offer/sell)' },
       { cmd: '`!view <groupId>`', desc: 'View details of one card type you own' },
       { cmd: '`!index`',        desc: 'See your progress & shiny counts by rarity' },
-      { cmd: '`!leaderboard`',  desc: 'Top collectors by inventory worth' }
+      { cmd: '`!leaderboard`',  desc: 'Top collectors by inventory worth' },
+      { cmd: '`!give`', desc: 'Give other users money' }
     ]
   },
   {
