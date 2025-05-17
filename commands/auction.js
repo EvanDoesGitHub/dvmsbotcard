@@ -24,9 +24,13 @@ module.exports = {
             if (!match) {
                 return null; // Invalid format
             }
-            const cardId = match[1];
+            let cardId = match[1];
             const shiny = match[2] === '1';
             const condition = match[3] === '3' ? 'Poor' : match[3] === '4' ? 'Great' : 'Average';
+
+             if (!cardId.startsWith('card')) {
+                cardId = `card${cardId}`;
+             }
             return { cardId, shiny, condition };
         }
 
