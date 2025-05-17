@@ -124,11 +124,14 @@ module.exports = {
                         console.log(`Dealer Hand: ${dealerHand.join(' ')}, Dealer Value: ${dealerValue}`); // Log dealer hand and value
                     }
                     console.log(`Before setFields (end): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
+                    // Check if dealerValue is a valid number
+                    const dealerPointsValue = isNaN(dealerValue) ? '?' : dealerValue;
+
                     embed.setFields(
                         { name: 'Your Hand', value: playerHand.join(' '), inline: true },
                         { name: 'Dealer Hand', value: dealerHand.join(' '), inline: true },
                         { name: 'Your Points', value: playerValue, inline: true },
-                        { name: 'Dealer Points', value: dealerValue, inline: true },
+                        { name: 'Dealer Points', value: dealerPointsValue, inline: true },
                     );
                     console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);  //important
                     if (playerValue > 21) {
