@@ -5,23 +5,23 @@ const SECTIONS = [
     emoji: '1️⃣',
     title: '📦 Collection & Inventory',
     commands: [
-      { cmd: '`!drop`',       desc: 'Trigger a random card drop' },
+      { cmd: '`!drop`',        desc: 'Trigger a random card drop' },
       { cmd: '`!inventory`',  desc: 'Show your cards, grouped by ID/shine/condition' },
-      { cmd: '`!mygroups`',   desc: 'List your distinct group IDs (for offer/sell)' },
+      { cmd: '`!mygroups`',     desc: 'List your distinct group IDs (for offer/sell)' },
       { cmd: '`!view <groupId>`', desc: 'View details of one card type you own' },
-      { cmd: '`!index`',      desc: 'See your progress & shiny counts by rarity' },
-      { cmd: '`!leaderboard`',desc: 'Top collectors by inventory worth' }
+      { cmd: '`!index`',        desc: 'See your progress & shiny counts by rarity' },
+      { cmd: '`!leaderboard`',  desc: 'Top collectors by inventory worth' }
     ]
   },
   {
     emoji: '2️⃣',
     title: '🤝 Trading',
     commands: [
-      { cmd: '`!trade @user`',      desc: 'Invite someone to a card trade' },
+      { cmd: '`!trade @user`',        desc: 'Invite someone to a card trade' },
       { cmd: '`!offer <groupId> <qty>`', desc: 'Offer specific cards into a trade' },
       { cmd: '`!remove <groupId> <qty>`',desc: 'Remove offered cards before confirm' },
-      { cmd: '`!confirm`',          desc: 'Lock in your side of the trade' },
-      { cmd: '`!endtrade`',         desc: 'Cancel your active trade immediately' }
+      { cmd: '`!confirm`',            desc: 'Lock in your side of the trade' },
+      { cmd: '`!endtrade`',           desc: 'Cancel your active trade immediately' }
     ]
   },
   {
@@ -32,7 +32,7 @@ const SECTIONS = [
       { cmd: '`!balance`',          desc: 'Show your current ₩ balance' },
       { cmd: '`!auction start <groupId> <startPrice> <durSec>`', desc: 'Put cards up for auction' },
       { cmd: '`!auction bid <auctionId> <amt>`', desc: 'Bid on someone else’s auction' },
-      { cmd: '`!auctions`',         desc: 'List all active auctions' }
+      { cmd: '`!auction view`',        desc: 'View all active auctions' } // ADDED THIS LINE
     ]
   },
   {
@@ -48,8 +48,8 @@ const SECTIONS = [
     title: '🛠️ Admin & Misc',
     commands: [
       { cmd: '`!addcard <rarity> <title> <imageUrl>`', desc: '🔧 Owner-only: add a new card to the pool' },
-      { cmd: '`!restart`',          desc: '🔄 Owner-only: restart the bot process' },
-      { cmd: '`!help`',             desc: '📖 Show this help menu' }
+      { cmd: '`!restart`',            desc: '🔄 Owner-only: restart the bot process' },
+      { cmd: '`!help`',               desc: '📖 Show this help menu' }
     ]
   }
 ];
