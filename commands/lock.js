@@ -38,12 +38,11 @@ module.exports = {
         let lockedCount = 0;
         let alreadyLocked = 0;
         for (const cardToLock of cardsToLock) {
-            const identifier = cardToLock.cardId + (cardToLock.shiny !== undefined ? `.${cardToLock.shiny}` : '') + (cardToLock.condition !== undefined ? `.${cardToLock.condition}` : '');
+            const identifier = `${cardToLock.cardId}.${cardToLock.shiny !== undefined ? (cardToLock.shiny ? '1' : '0') : '*'}.${cardToLock.condition !== undefined ? (cardToLock.condition === 'Poor' ? '3' : cardToLock.condition === 'Great' ? '4' : '2') : '*'}`;
             if (!db.data.lockedCards.includes(identifier)) {
                 db.data.lockedCards.push(identifier);
                 lockedCount++;
-            }
-            else{
+            } else {
                 alreadyLocked++;
             }
         }
@@ -53,8 +52,8 @@ module.exports = {
             .setTitle('🔒 Card(s) Locked')
             .setDescription(`${lockedCount} card(s) matching **${input}** have been locked and can no longer be sold.`)
             .setColor(0xFF0000);
-        if (alreadyLocked > 0){
-             embed.setFooter({ text: `${alreadyLocked} card(s) were already locked.` });
+        if (alreadyLocked > 0) {
+            embed.setFooter({ text: `${alreadyLocked} card(s) were already locked.` });
         }
 
         return message.channel.send({ embeds: [embed] });
