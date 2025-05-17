@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const { nanoid } = require('nanoid'); // For generating unique IDs
 
 module.exports = {
     name: 'auction',
@@ -10,50 +11,36 @@ module.exports = {
     async execute(message, args, { cards, db }) {
         await db.read();
         const userId = message.author.id;
-        const sub = args[0]?.toLowerCase();
+        const subCommand = args[0]?.toLowerCase();
 
-        // helper to parse groupId (cardX.Y.Z or X.Y.Z)
-        function parseGroupId(input) {
-            const match = input.match(/^(\d+)\.(\d)\.(\d)$/);
+        // Helper Functions
+        /**
+         * Parses a group ID string into its constituent parts.
+         * @param {string} groupId - The group ID string (e.g., "1.0.2" or "card1.1.3").
+         * @returns {object|null} - An object with cardId, shiny, and condition, or null if invalid.
+         */
+        function parseGroupId(groupId) {
+            const regex = /^(\d+|card\d+)\.(\d)\.(\d)$/;
+            const match = groupId.match(regex);
             if (!match) {
-                console.log(`parseGroupId: Invalid input format: ${input}`);
-                return null;
+                return null; // Invalid format
             }
-            const [ , cardIdRaw, shinyCode, conditionCode] = match;
-            const cardId = `card${cardIdRaw}`;
-            const shiny = shinyCode === '1';
-            const condition = conditionCode === '3' ? 'Poor'
-                : conditionCode === '4' ? 'Great'
-                : 'Average';
-            console.log(`parseGroupId: Parsed cardId: ${cardId}, shiny: ${shiny}, condition: ${condition}`);
+            const cardId = match[1];
+            const shiny = match[2] === '1';
+            const condition = match[3] === '3' ? 'Poor' : match[3] === '4' ? 'Great' : 'Average';
             return { cardId, shiny, condition };
         }
 
-        // ENSURE auctions key exists
-        db.data.auctions ||= {};
-
-        // ――― START ―――
-        if (sub === 'start') {
-            const groupId = args[1];
-            const startPrice = parseInt(args[2], 10);
-            const durationStr = args[3];
-
-            if (!groupId || isNaN(startPrice) || !durationStr) {
-                console.log(`!auction start: Invalid arguments. groupId: ${groupId}, startPrice: ${startPrice}, durationStr: ${durationStr}`);
-                return message.reply('Usage: `!auction start <groupId> <startingPrice> <duration>` (e.g., `!auction start 3.1.4 100 1w2d3h`)');
-            }
-
-            // Validate startPrice
-            if (startPrice < 1) {
-                console.log(`!auction start: startPrice is less than 1: ${startPrice}`);
-                return message.reply('Starting price must be at least 1.');
-            }
-
-            // Parse duration string
-            const durationRegex = /(\d+)([wdhms])/gi;
+        /**
+         * Parses a duration string into total seconds.
+         * @param {string} durationString - The duration string (e.g., "1w2d3h").
+         * @returns {number} - The total duration in seconds.
+         */
+        function parseDuration(durationString) {
+            const regex = /(\d+)([wdhms])/gi;
             let totalSeconds = 0;
             let match;
-            while ((match = durationRegex.exec(durationStr)) !== null) {
+            while ((match = regex.exec(durationString)) !== null) {
                 const value = parseInt(match[1], 10);
                 const unit = match[2].toLowerCase();
                 switch (unit) {
@@ -63,164 +50,171 @@ module.exports = {
                     case 'm': totalSeconds += value * 60; break;
                     case 's': totalSeconds += value; break;
                 }
-                console.log(`!auction start: Parsed duration part: value: ${value}, unit: ${unit}, totalSeconds: ${totalSeconds}`); // Added logging
+            }
+            return totalSeconds;
+        }
+
+        // Ensure auctions key exists in database
+        db.data.auctions = db.data.auctions || {};
+
+        // --- Start Auction ---
+        if (subCommand === 'start') {
+            const groupId = args[1];
+            const startingPrice = parseInt(args[2], 10);
+            const durationString = args[3];
+
+            // Input validation
+            if (!groupId || isNaN(startingPrice) || isNaN(parseDuration(durationString)) || startingPrice < 1) {
+                return message.reply(
+                    'Usage: `!auction start <groupId> <startingPrice> <duration>` (e.g., `!auction start 3.1.4 100 1w2d3h`)\n' +
+                    '  - Starting price must be a number greater than 0.\n' +
+                    '  - Duration must be in the format: 1w2d3h4m5s (minimum 10 seconds, maximum 30 days).'
+                );
             }
 
-            // Validate totalSeconds
-            const maxDuration = 30 * 24 * 60 * 60; // 30 days in seconds
-            if (totalSeconds < 10 || totalSeconds > maxDuration) {
-                console.log(`!auction start: Invalid duration: ${totalSeconds}`);
+            const durationSeconds = parseDuration(durationString);
+            if (durationSeconds < 10 || durationSeconds > 30 * 24 * 60 * 60) {
                 return message.reply('Duration must be between 10 seconds and 30 days.');
             }
-            const durationSec = totalSeconds;
-            console.log(`!auction start: Calculated duration in seconds: ${durationSec}`); // Added logging
 
-            // find card in your inventory
-            const user = db.data.users[userId] ||= { inventory: [], balance: 0 };
-            const info = parseGroupId(groupId);
-            if (!info) {
-                console.log(`!auction start: Invalid groupId: ${groupId}`);
-                return message.reply('Invalid group ID format. Use `<cardId>.<shiny>.<condition>` (e.g., `3.1.4`)');
+            const parsedGroupId = parseGroupId(groupId);
+            if (!parsedGroupId) {
+                return message.reply('Invalid group ID format.  Use something like:  1.0.2');
             }
 
-            console.log(`!auction start: User inventory:`, user.inventory);
-            console.log(`!auction start: Parsed card info:`, info);
-
-            const cardToAuction = user.inventory.find(c =>
-                c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition
+            const { cardId, shiny, condition } = parsedGroupId;
+            const user = db.data.users[userId] || { inventory: [], balance: 0 };
+            const cardToAuction = user.inventory.find(card =>
+                card.cardId === cardId && card.shiny === shiny && card.condition === condition
             );
 
             if (!cardToAuction) {
-                console.log(`!auction start: Card not found in inventory. groupId: ${groupId}, info:`, info);
-                return message.reply(`You don't have any **${groupId}** to auction.`);
+                return message.reply(`You don't have that card (${groupId}) to auction.`);
             }
-            const cardInstanceId = cardToAuction.instanceId; //store instanceId
 
-            // pull the card out of inventory
-            const newInventory = user.inventory.filter(c => !(c.cardId === info.cardId && !!c.shiny === info.shiny && c.condition === info.condition && c.instanceId === cardInstanceId)); // added instanceId check
-            if (newInventory.length !== user.inventory.length - 1) {
-                user.inventory = newInventory;
-                console.log(`!auction start: Card removed from inventory. New inventory:`, newInventory);
-            } else {
-                console.log(`!auction start: Card not removed from inventory.  This should not happen. groupId: ${groupId}, info:`, info);
-                return message.reply(`You don't have any **${groupId}** to auction.`);
-            }
+            // Remove the card from the user's inventory
+            user.inventory = user.inventory.filter(card => card.instanceId !== cardToAuction.instanceId);
             await db.write();
 
-            // register auction
-            const { nanoid } = await import('nanoid'); // Dynamically import nanoid
+            // Create the auction
             const auctionId = nanoid();
-            const now = Date.now();
-            const expiresAt = now + durationSec * 1000;
-            db.data.auctions[auctionId] = {
+            const expiresAt = Date.now() + durationSeconds * 1000;
+            const newAuction = {
                 id: auctionId,
                 seller: userId,
                 card: cardToAuction,
-                highestBid: startPrice,
+                highestBid: startingPrice,
                 highestBidder: null,
                 deposits: {},
-                expiresAt: expiresAt,
-                ended: false
+                expiresAt,
+                ended: false,
             };
+            db.data.auctions[auctionId] = newAuction;
             await db.write();
 
-            const baseCard = cards.find(c => c.id === cardToAuction.cardId); // Find base card info
-            const sparkle = cardToAuction.shiny ? '✨' : '';
+            // Build and send the embed
+            const baseCard = cards.find(c => c.id === cardToAuction.cardId);
+            const shinyText = cardToAuction.shiny ? '✨' : '';
             const embed = new EmbedBuilder()
-                .setTitle('🏷️ Auction Started')
-                .setDescription(`**${baseCard.title}** ${sparkle} (${groupId}) is up for auction!`) // Use baseCard
+                .setTitle('🏷️ New Auction Started')
+                .setDescription(`**${baseCard.title}** ${shinyText} (${groupId}) is up for auction!`)
                 .addFields(
                     { name: 'Auction ID', value: auctionId, inline: true },
-                    { name: 'Start Price', value: `${startPrice}₩`, inline: true },
-                    { name: 'Duration', value: `${durationStr}`, inline: true }, // Show the user's input
-                    { name: 'Seller', value: `<@${userId}>`, inline: true }, // Add seller
+                    { name: 'Starting Price', value: `${startingPrice}₩`, inline: true },
+                    { name: 'Duration', value: durationString, inline: true },
+                    { name: 'Seller', value: `<@${userId}>`, inline: true },
                 )
-                .setImage(baseCard.image) // Add card image
+                .setImage(baseCard.image)
                 .setColor(0x00AE86);
-            console.log(`!auction start: Auction started:`, db.data.auctions[auctionId]);
+
             return message.channel.send({ embeds: [embed] });
         }
 
-        // ――― BID ―――
-        else if (sub === 'bid') {
+        // --- Bid on Auction ---
+        if (subCommand === 'bid') {
             const auctionId = args[1];
             const bidAmount = parseInt(args[2], 10);
 
-            if (!auctionId || isNaN(bidAmount)) {
-                return message.reply('Usage: `!auction bid <auctionId> <amount>`');
-            }
-            const auction = db.data.auctions[auctionId];
-            if (!auction || auction.ended) {
-                return message.reply('Auction not found or already ended.');
-            }
-            const now = Date.now();
-            if (now >= auction.expiresAt) {
-                return message.reply('This auction has already expired.');
+            // Input validation
+            if (!auctionId || isNaN(bidAmount) || bidAmount < 1) {
+                return message.reply('Usage: `!auction bid <auctionId> <amount>` - Amount must be a number greater than 0.');
             }
 
-            // ensure bidder has enough balance beyond any previous deposit
-            const user = db.data.users[userId] ||= { inventory: [], balance: 0 };
-            const prev = auction.deposits[userId] || 0;
-            const required = bidAmount - prev;
-            if (required > user.balance) {
-                return message.reply(`Insufficient funds. You need **${required}₩** more to bid **${bidAmount}₩**.`);
+            const auction = db.data.auctions[auctionId];
+            if (!auction) {
+                return message.reply('Auction not found.');
+            }
+            if (auction.ended) {
+                return message.reply('This auction has ended.');
+            }
+            if (Date.now() >= auction.expiresAt) {
+                return message.reply('This auction has expired.');
             }
             if (bidAmount <= auction.highestBid) {
-                return message.reply(`Your bid must exceed the current highest bid of **${auction.highestBid}₩**.`);
+                return message.reply(`Your bid must be higher than the current highest bid of ${auction.highestBid}₩.`);
             }
 
-            // refund last highest bidder
+            const user = db.data.users[userId] || { balance: 0 };
+            const previousDeposit = auction.deposits[userId] || 0;
+            const requiredFunds = bidAmount - previousDeposit;
+
+            if (user.balance < requiredFunds) {
+                return message.reply(`You need ${requiredFunds}₩ to make that bid.  Your current balance: ${user.balance}₩`);
+            }
+
+            // Refund the previous highest bidder
             if (auction.highestBidder) {
                 db.data.users[auction.highestBidder].balance += auction.highestBid;
                 auction.deposits[auction.highestBidder] = 0;
             }
 
-            // take new deposit
-            user.balance -= required;
+            // Deduct the bid amount from the bidder and update auction
+            user.balance -= requiredFunds;
             auction.deposits[userId] = bidAmount;
             auction.highestBid = bidAmount;
             auction.highestBidder = userId;
             await db.write();
 
-            return message.channel.send({
-                embeds: [
-                    new EmbedBuilder()
-                        .setTitle('💰 New Highest Bid')
-                        .setDescription(`<@${userId}> bids **${bidAmount}₩** on **${auction.card.title}**`)
-                        .addFields(
-                            { name: 'Auction ID', value: auctionId, inline: true },
-                            { name: 'Expires In', value: `${Math.ceil((auction.expiresAt - now) / 1000)}s`, inline: true }
-                        )
-                        .setColor(0xFFA500)
-                ]
-            });
+            // Send a confirmation message
+            const embed = new EmbedBuilder()
+                .setTitle('💰 New Highest Bid')
+                .setDescription(`<@${userId}> has the highest bid with **${bidAmount}₩**!`)
+                .addFields(
+                    { name: 'Auction ID', value: auctionId, inline: true },
+                    {
+                        name: 'Time Remaining',
+                        value: `${Math.ceil((auction.expiresAt - Date.now()) / 1000)} seconds`,
+                        inline: true
+                    }
+                )
+                .setColor(0xFFA500);
+            return message.channel.send({ embeds: [embed] });
         }
 
-        // ――― STOP ―――
-        else if (sub === 'stop') {
+        // --- Stop Auction ---
+        if (subCommand === 'stop') {
             const auctionId = args[1];
             if (!auctionId) {
                 return message.reply('Usage: `!auction stop <auctionId>`');
             }
+
             const auction = db.data.auctions[auctionId];
             if (!auction) {
                 return message.reply('Auction not found.');
             }
             if (auction.seller !== userId) {
-                return message.reply('Only the auction creator can stop it.');
+                return message.reply('You can only stop auctions you created.');
             }
             if (auction.ended) {
-                return message.reply('This auction is already ended.');
+                return message.reply('That auction has already ended.');
             }
 
             auction.ended = true;
             await db.write();
-            return message.channel.send(`✅ Auction \`${auctionId}\` has been stopped by its creator.`);
+            return message.channel.send(`✅ Auction \`${auctionId}\` has been stopped.`);
         }
 
-        // ――― INVALID ―――
-        else {
-            return message.reply('Invalid subcommand. Use `start`, `bid` or `stop`.');
-        }
-    }
+        // --- Invalid Subcommand ---
+        return message.reply('Invalid subcommand. Use `start`, `bid`, or `stop`.');
+    },
 };
