@@ -38,7 +38,13 @@ module.exports = {
             const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
             // Calculate drops remaining.  The !buy command sets the boost to expire after 100 drops.
-            const dropsRemaining = Math.ceil(remaining / (60 * 60 * 1000)); // Assuming 1 drop per hour, convert ms to hours
+            let dropsRemaining = Math.ceil(remaining / (60 * 60 * 1000)); // Assuming 1 drop per hour, convert ms to hours
+
+            // added this check
+            if(user.luckBoost.dropsRemaining !== undefined){
+                dropsRemaining = user.luckBoost.dropsRemaining;
+            }
+
 
             const embed = new EmbedBuilder()
                 .setTitle('Active Boost')
@@ -48,6 +54,10 @@ module.exports = {
                     { name: 'Drops Remaining', value: `${dropsRemaining}` }
                 )
                 .setColor(0xF1C40F); // Gold color
+            
+            // Save dropsRemaining to the database
+            user.luckBoost.dropsRemaining = dropsRemaining;
+            await db.write();
 
             return message.channel.send({ embeds: [embed] });
         }
