@@ -5,132 +5,170 @@ function getRarity(user) {
     const n = Math.random() * 100;
     let rarity;
     let chance;
+    let percentage;
 
-     if (user?.luckBoost?.multiplier === 25) { // 25x boost
+    if (user?.luckBoost?.multiplier === 25) { // 25x boost
         if (n < 0.01) {
             rarity = 'Secret';
             chance = '1 in 10000';
+            percentage = '0.01%';
         } else if (n < 0.1) {
             rarity = 'Mythic';
             chance = '1 in 1000';
+            percentage = '0.09%';
         } else if (n < 0.5) {
             rarity = 'Legendary';
             chance = '1 in 200';
+            percentage = '0.4%';
         } else if (n < 2) {
             rarity = 'Epic';
             chance = '1 in 50';
+            percentage = '1.5%';
         } else if (n < 5) {
             rarity = 'Rare';
             chance = '1 in 33';
+            percentage = '3%';
         } else {
-            rarity = 'Rare';
+            rarity = 'Common'; // Changed from Rare to Common
             chance = '>1 in 20';
+            percentage = '>95%';
         }
     } else if (user?.luckBoost?.multiplier === 10) { // 10x boost
         if (n < 0.02) {
             rarity = 'Secret';
             chance = '1 in 5000';
+             percentage = '0.02%';
         } else if (n < 0.2) {
             rarity = 'Mythic';
             chance = '1 in 555';
+            percentage = '0.18%';
         } else if (n < 1) {
             rarity = 'Legendary';
             chance = '1 in 125';
+            percentage = '0.8%';
         } else if (n < 5) {
             rarity = 'Epic';
             chance = '1 in 25';
+             percentage = '4%';
         } else if (n < 15) {
             rarity = 'Rare';
             chance = '1 in 10';
+            percentage = '10%';
         } else {
-            rarity = 'Rare';
+            rarity = 'Common';  // Changed from Rare to Common
             chance = '>1 in 7';
+            percentage = '>85%';
         }
     } else if (user?.luckBoost?.multiplier === 5) { // 5x boost
         if (n < 0.1) {
             rarity = 'Secret';
             chance = '1 in 1000';
+            percentage = '0.1%';
         } else if (n < 0.8) {
             rarity = 'Mythic';
             chance = '1 in 125';
+            percentage = '0.7%';
         } else if (n < 4) {
             rarity = 'Legendary';
             chance = '1 in 25';
+            percentage = '3.2%';
         } else if (n < 15) {
             rarity = 'Epic';
             chance = '1 in 7';
+            percentage = '11%';
         } else if (n < 30) {
             rarity = 'Rare';
             chance = '1 in 5';
+            percentage = '15%';
         } else {
-            rarity = 'Rare';
+            rarity = 'Common';  // Changed from Rare to Common
             chance = '>1 in 3.3';
+            percentage = '>70%';
         }
     } else if (user?.luckBoost?.multiplier === 4) {
         if (n < 0.03) {
             rarity = 'Secret';
             chance = '1 in 3333';
+            percentage = '0.03%';
         } else if (n < 0.3) {
             rarity = 'Mythic';
             chance = '1 in 370';
+            percentage = '0.27%';
         } else if (n < 1.5) {
             rarity = 'Legendary';
             chance = '1 in 66';
+            percentage = '1.2%';
         } else if (n < 7.5) {
             rarity = 'Epic';
             chance = '1 in 13';
+            percentage = '6%';
         } else if (n < 15) {
             rarity = 'Rare';
             chance = '1 in 6.6';
+            percentage = '7.5%';
         } else {
             rarity = 'Uncommon';
             chance = '>1 in 6.6';
+            percentage = '>85%';
         }
     } else if (user?.luckBoost?.multiplier === 2) { // 2x boost
         if (n < 0.05) {
             rarity = 'Secret';
             chance = '1 in 2000';
+            percentage = '0.05%';
         } else if (n < 0.5) {
             rarity = 'Mythic';
             chance = '1 in 222';
+            percentage = '0.45%';
         } else if (n < 2.5) {
             rarity = 'Legendary';
             chance = '1 in 40';
+            percentage = '2%';
         } else if (n < 10) {
             rarity = 'Epic';
             chance = '1 in 10';
+            percentage = '7.5%';
         } else if (n < 20) {
             rarity = 'Rare';
             chance = '1 in 5';
+            percentage = '10%';
         } else {
             rarity = 'Uncommon';
             chance = '>1 in 5';
+            percentage = '>80%';
         }
     } else { // No boost
         if (n < 0.05) {
             rarity = 'Secret';
             chance = '1 in 2000';
+            percentage = '0.05%';
         } else if (n < 0.5) {
             rarity = 'Mythic';
             chance = '1 in 222';
+            percentage = '0.45%';
         } else if (n < 2.5) {
             rarity = 'Legendary';
             chance = '1 in 40';
+            percentage = '2%';
         } else if (n < 10) {
             rarity = 'Epic';
             chance = '1 in 10';
+            percentage = '7.5%';
         } else if (n < 20) {
             rarity = 'Rare';
             chance = '1 in 5';
+            percentage = '10%';
         } else if (n < 40) {
             rarity = 'Uncommon';
             chance = '1 in 2.5';
+            percentage = '20%';
         } else {
             rarity = 'Common';
             chance = '1 in 2.5';
+            percentage = '40%';
         }
     }
-    return { rarity, chance };
+    return { rarity, chance, percentage };
 }
 
 // Helper function for card condition (same as before)
@@ -195,7 +233,7 @@ module.exports = {
 
 
             // pick rarity→card
-            const { rarity, chance } = getRarity(user); // Pass user object to getRarity
+            const { rarity, chance, percentage } = getRarity(user); // Pass user object to getRarity
             // **Crucial Check:** Make sure 'cards' is an array before filtering
             if (!Array.isArray(cards)) {
                 console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
@@ -223,7 +261,7 @@ module.exports = {
             const finalValue = Math.ceil(baseValue * (1 + modifier));
 
             // build embed
-            let desc = `A **${selected.rarity}** card dropped! (${chance}) React ✅ to claim.`;
+            let desc = `A **${selected.rarity}** card dropped! (${chance} chance, ${percentage}) React ✅ to claim.`;
             let remaining = dropperId === BYPASS_USER_ID ? 'unlimited' : user.dropsAvailable - 1;
             desc += `\nYou have **${remaining}** drops left.`;
             if (remaining !== 'unlimited' && remaining <= 2)
