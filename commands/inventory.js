@@ -14,8 +14,8 @@ module.exports = {
     const groups = {};
     let totalWorth = 0;
 
-    for (const cardId of user.inventory) {
-      const cardParts = cardId.split('.'); // cardId.shiny.condition.protected
+    for (const cardIdFull of user.inventory) {
+      const cardParts = cardIdFull.split('.'); // cardId.shiny.condition.protected
       const baseCardId = cardParts[0];
       const shiny = cardParts[1] === '1';
       const conditionCode = cardParts[2]; // "2", "3", or "4"
