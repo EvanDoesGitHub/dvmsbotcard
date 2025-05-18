@@ -123,7 +123,7 @@ module.exports = {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
-                    user.dropsAvailable = 3; //reset drops available
+                    user.dropsAvailable = 10; //reset drops available
                 }
 
                 if (user.cooldownEnd && now < user.cooldownEnd) {
