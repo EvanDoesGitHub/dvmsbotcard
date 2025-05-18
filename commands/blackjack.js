@@ -58,7 +58,6 @@ module.exports = {
     const collector = gameMessage.createReactionCollector({
         filter: (reaction, user) =>
             ['🇭', '🇸', '🇩'].includes(reaction.emoji.name) && user.id === userId, //Removed split
-        max: 1,
         time: 60000, // 60 seconds
     });
 
