@@ -18,14 +18,15 @@ module.exports = {
       // Total distinct cards in the system
       const totalCards = cards.length;
 
-      // Ever-collected distinct IDs
+      // Ever-collected distinct IDs.  This is the key change:  use user.collected
       const collectedIds = new Set(user.collected);
+
 
       // Distinct shiny IDs ever collected
       const shinyIds = new Set(
         user.inventory
           .filter(c => c.shiny)
-          .map(c => c.cardId) // Changed to c.cardId
+          .map(c => c.cardId)
       );
 
       // Rarity buckets
@@ -41,7 +42,7 @@ module.exports = {
       });
 
       // Populate collectedByRarity
-      for (const id of collectedIds) {
+       for (const id of collectedIds) {
         const def = cards.find(c => c.id === id);
         if (def) collectedByRarity[def.rarity].add(id);
       }
@@ -49,9 +50,9 @@ module.exports = {
       // Populate shinyByRarity
       for (const card of user.inventory) {
         if (card.shiny) {
-          const def = cards.find(c => c.id === card.cardId); // Changed to use cardId
+          const def = cards.find(c => c.id === card.cardId);
           if (def) {
-            shinyByRarity[def.rarity].add(card.cardId); // Added cardId
+            shinyByRarity[def.rarity].add(card.cardId);
           }
         }
       }
