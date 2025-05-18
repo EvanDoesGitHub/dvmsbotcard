@@ -80,14 +80,18 @@ module.exports = {
                 for (const [groupKey, { cardInfo, count }] of slice) { // Destructure cardInfo
                     const groupWorth = cardInfo.value * count;
                     const shinyLabel = cardInfo.shiny ? '✨ SHINY CARD ✨' : '';
-                    const conditionLbl =
-                        cardInfo.condition === 1 ? '⚠️ Poor Condition'
-                        : cardInfo.condition === 3 ? '🌟 Great Condition'
-                        : '🔹 Average Condition'; // 2 is average
+                    let conditionLabelText = '';
+                    if (cardInfo.condition === 1) {
+                        conditionLabelText = '⚠️ Poor Condition';
+                    } else if (cardInfo.condition === 2) {
+                        conditionLabelText = '🔹 Average Condition';
+                    } else if (cardInfo.condition === 3) {
+                        conditionLabelText = '🌟 Great Condition';
+                    }
                     const protectedLabel = cardInfo.protected ? '🔒 Protected' : ''; // Get protected status
 
                     embed.addFields({
-                        name: `ID: **${groupKey}** — ${cardInfo.title} ${shinyLabel} ${conditionLbl} ${protectedLabel}`, // Added protectedLabel
+                        name: `ID: **${cardId}.${shiny ? '1' : '0'}.${cardInfo.condition}** — ${cardInfo.title} ${shinyLabel} ${conditionLabelText} ${protectedLabel}`, // Added protectedLabel
                         value: `Quantity: ${count}\n` +
                             `Value per card: ${cardInfo.value}₩\n` +
                             `Group worth: ${groupWorth}₩`,
