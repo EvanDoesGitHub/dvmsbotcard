@@ -101,6 +101,7 @@ module.exports = {
             const dropperId = message.author.id;
             const now = Date.now();
             const BYPASS_USER_ID = '722463127782031400'; // Replace with your ID
+            const COOLDOWN_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
             let user = db.data?.users?.[dropperId];
             if (!user) {
@@ -109,7 +110,7 @@ module.exports = {
                     cooldownEnd: 0,
                     inventory: [],
                     balance: 0,
-                    dropsAvailable: 3, // give 3 drops as default
+                    dropsAvailable: 10, // give 3 drops as default
                     luckBoost: null
                 };
                 if (!db.data) db.data = { users: {} };
@@ -122,7 +123,9 @@ module.exports = {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
+                    user.dropsAvailable = 3; //reset drops available
                 }
+
                 if (user.cooldownEnd && now < user.cooldownEnd) {
                     const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
                         timeZone: 'America/Toronto',
@@ -132,7 +135,13 @@ module.exports = {
                 }
 
                 if (user.dropsAvailable <= 0) {
-                    return message.reply('You have no more card drops available! Use the `buy` command to get more.');
+                     user.cooldownEnd = now + COOLDOWN_DURATION;
+                     try{
+                        await db.write();
+                     } catch(e){
+                        console.error("Error writing to db", e);
+                     }
+                    return message.reply('You have no more card drops available!  They will reset in 1 hour.');
                 }
             }
 
