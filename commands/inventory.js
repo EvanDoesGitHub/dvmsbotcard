@@ -15,11 +15,14 @@ module.exports = {
     let totalWorth = 0;
 
     for (const cardIdFull of user.inventory) {
-      if (typeof cardIdFull !== 'string') {
-        console.warn(`Unexpected non-string value in inventory: ${cardIdFull}.  Skipping.`);
-        continue; // Skip this iteration if it's not a string.
+      // Force conversion to string *before* the type check.
+      const cardIdFullString = String(cardIdFull);
+
+      if (typeof cardIdFullString !== 'string') {
+        console.warn(`Unexpected non-string value in inventory: ${cardIdFullString} (after conversion).  Skipping.`);
+        continue; // Skip this iteration if it's still not a string.
       }
-      const cardParts = cardIdFull.split('.'); // cardId.shiny.condition.protected
+      const cardParts = cardIdFullString.split('.'); // cardId.shiny.condition.protected
       const baseCardId = cardParts[0];
       const shiny = cardParts[1] === '1';
       const conditionCode = cardParts[2]; // "2", "3", or "4"
