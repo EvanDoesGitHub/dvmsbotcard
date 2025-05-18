@@ -7,7 +7,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle('🛒 Card Shop')
             .setDescription('Purchase items to enhance your card collection!')
-            .setColor(0x00AE86) // You can choose a color
+            .setColor(0x00AE86)
             .addFields(
                 {
                     name: 'Card Pack',
@@ -38,9 +38,29 @@ module.exports = {
                     name: 'Price',
                     value: '25000₩',
                     inline: true,
+                },
+                {
+                    name: 'Balance Lock',
+                    value: 'Prevents you from being robbed for the next hour.\nUse `!buy balancelock` to purchase.',
+                    inline: false,
+                },
+                {
+                    name: 'Price',
+                    value: '1000₩',
+                    inline: true,
+                },
+                {
+                    name: 'Card Protector',
+                    value: 'Permanently protects one of your cards from being damaged.\nUse `!buy cardprotector <card_id>` to purchase.',
+                    inline: false,
+                },
+                {
+                  name: 'Price',
+                  value: '1000₩',
+                  inline: true
                 }
             )
-            .setThumbnail('https://cdn.discordapp.com/emojis/your_shop_emoji_id.png?size=80'); // Replace with an actual emoji
+            .setThumbnail('https://cdn.discordapp.com/emojis/your_shop_emoji_id.png?size=80');
 
         return message.channel.send({ embeds: [embed] });
     },
