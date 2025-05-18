@@ -21,13 +21,26 @@ function getHandValue(hand) {
     return value;
 }
 
-// Helper function to get a random card
+// Helper function to get a random card with emojis
 function getCard() {
     const suits = ['♠️', '♥️', '♦️', '♣️'];
     const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
     const suit = suits[Math.floor(Math.random() * suits.length)];
     const rank = ranks[Math.floor(Math.random() * ranks.length)];
     return `${rank}${suit}`;
+}
+
+// Function to format card display with emojis
+function formatCardDisplay(hand) {
+    return hand.map(card => {
+        const suitEmoji = {
+            '♠️': '♠️',
+            '♥️': '♥️',
+            '♦️': '♦️',
+            '♣️': '♣️',
+        }[card.slice(-1)];
+        return `${card.slice(0, -1)}${suitEmoji}`;
+    }).join(' ');
 }
 
 module.exports = {
@@ -69,12 +82,13 @@ module.exports = {
                 .setTitle('Blackjack Game')
                 .setDescription(`Bet: ${bet}₩`)
                 .addFields(
-                    { name: 'Your Hand', value: playerHand.join(' '), inline: true },
-                    { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
+                    { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
+                    { name: 'Dealer Hand', value: `${dealerHand[0]} ❓`, inline: true },
                     { name: 'Your Points', value: String(playerValue), inline: true },
                     { name: 'Dealer Points', value: '?', inline: true },
                 )
-                .setFooter({ text: 'Type `hit` or `stand`' });
+                .setFooter({ text: 'Type `hit` or `stand`' })
+                .setColor(0x00BFFF); // Blue color for initial game state
 
             const gameMessage = await message.reply({ embeds: [embed] });
 
@@ -90,13 +104,11 @@ module.exports = {
                     if (input === 'hit') {
                         playerHand.push(getCard());
                         playerValue = getHandValue(playerHand);
-                        console.log(`Player Hand: ${playerHand.join(' ')}, Player Value: ${playerValue}`); // Log player hand and value
-                        console.log(`Before setFields (hit): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
-                        const playerPointsValue = isNaN(playerValue) ? '?' : String(playerValue);
+                        console.log(`Player Hand: ${formatCardDisplay(playerHand)}, Player Value: ${playerValue}`);
                         embed.setFields(
-                            { name: 'Your Hand', value: playerHand.join(' '), inline: true },
-                            { name: 'Dealer Hand', value: `${dealerHand[0]} ?`, inline: true },
-                            { name: 'Your Points', value: playerPointsValue, inline: true },
+                            { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
+                            { name: 'Dealer Hand', value: `${dealerHand[0]} ❓`, inline: true },
+                            { name: 'Your Points', value: String(playerValue), inline: true },
                             { name: 'Dealer Points', value: '?', inline: true },
                         );
                         gameMessage.edit({ embeds: [embed] });
@@ -121,22 +133,14 @@ module.exports = {
                         message.reply('Game ended due to inactivity.');
                         return;
                     }
+
                     while (dealerValue < 17) {
                         dealerHand.push(getCard());
                         dealerValue = getHandValue(dealerHand);
-                        console.log(`Dealer Hand: ${dealerHand.join(' ')}, Dealer Value: ${dealerValue}`); // Log dealer hand and value
+                        console.log(`Dealer Hand: ${formatCardDisplay(dealerHand)}, Dealer Value: ${dealerValue}`);
                     }
-                    console.log(`Before setFields (end): playerHand: ${playerHand}, playerValue: ${playerValue}, dealerHand: ${dealerHand}, dealerValue: ${dealerValue}`);
-                    // Check if dealerValue is a valid number
-                    const dealerPointsValue = isNaN(dealerValue) ? '?' : String(dealerValue);
-                    const playerPointsValue = isNaN(playerValue) ? '?' : String(playerValue);
-                    embed.setFields(
-                        { name: 'Your Hand', value: playerHand.join(' '), inline: true },
-                        { name: 'Dealer Hand', value: dealerHand.join(' '), inline: true },
-                        { name: 'Your Points', value: playerPointsValue, inline: true },
-                        { name: 'Dealer Points', value: dealerPointsValue, inline: true },
-                    );
-                    console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);  //important
+
+                    console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);
                     let resultText = '';
                     let resultColor = 0;
 
@@ -156,12 +160,19 @@ module.exports = {
                         resultColor = 0xFF0000; // Red
                         user.balance -= bet;
                     }
-
+                    // Ensure balance doesn't go below 0
+                    user.balance = Math.max(0, user.balance);
+                    await db.write();
                     resultEmbed = new EmbedBuilder()
                         .setTitle(resultText.split('!')[0] + '!') // Use only the first part before "!"
                         .setDescription(resultText.substring(resultText.indexOf(' ') + 1))
-                        .setColor(resultColor);
-                    await db.write();
+                        .setColor(resultColor)
+                        .addFields(
+                            { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
+                            { name: 'Dealer Hand', value: formatCardDisplay(dealerHand), inline: true },
+                            { name: 'Your Points', value: String(playerValue), inline: true },
+                            { name: 'Dealer Points', value: String(dealerValue), inline: true },
+                        );
                     gameMessage.edit({ embeds: [embed, resultEmbed] });
                 } catch (error) {
                     console.error('Error in collector.on(end):', error);
