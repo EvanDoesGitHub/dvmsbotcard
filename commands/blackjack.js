@@ -169,7 +169,7 @@ module.exports = {
                         .setColor(resultColor)
                         .addFields(
                             { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
-                            { name: 'Dealer Hand', value: formatCardDisplay(dealerHand), inline: true },
+                            { name: 'Dealer Hand', value: formatCardDisplay(dealerHand), inline: true }, // Use formatCardDisplay here
                             { name: 'Your Points', value: String(playerValue), inline: true },
                             { name: 'Dealer Points', value: String(dealerValue), inline: true },
                         );
