@@ -13,7 +13,7 @@ module.exports = {
 
         await db.read();
         // Make sure the user exists in the DB
-        db.data.users[userId] ||= { inventory: [], balance: 0, cooldown: 0 };
+        db.data.users[userId] ||= { inventory: [], balance: 0, lastDrops: [], cooldownEnd: 0 }; // Added lastDrops and cooldownEnd
         let balance = db.data.users[userId].balance;
 
         let price = 0;
@@ -21,7 +21,7 @@ module.exports = {
 
         if (item === 'cardpack') {
             price = 5000;
-            description = 'Instantly refilled your drop timer!';
+            description = 'Instantly resets your drop timer!'; // Changed description
         } else if (item === '2xboost') {
             price = 10000;
             description = 'Activated 2x luck boost for your next 100 card drops!';
@@ -41,11 +41,12 @@ module.exports = {
 
         if (item === 'cardpack') {
             // Reset the user's cooldown
-            db.data.users[userId].cooldown = 0;
+            db.data.users[userId].cooldownEnd = 0; // Corrected to cooldownEnd
+            db.data.users[userId].lastDrops = []; // Reset drops
         } else if (item === '2xboost' || item === '5xboost') {
             // Apply luck boost
             let boost = item === '2xboost' ? 2 : 5;
-            let expiresAt = Date.now() + 100 * 60 * 60 * 1000; // Expires after 100 drops
+            let expiresAt = Date.now() + 6 * 60 * 60 * 1000; // Expires after 6 hours (or adjust as needed)
 
             // Check for existing boost and combine
             if (db.data.users[userId].luckBoost) {
@@ -58,7 +59,7 @@ module.exports = {
                     boost = 4;
                     expiresAt = Math.max(existingBoost.expiresAt, expiresAt);
                 }
-                 else if (existingBoost.multiplier === 5 && boost === 5) {
+                else if (existingBoost.multiplier === 5 && boost === 5) {
                     boost = 25;
                     expiresAt = Math.max(existingBoost.expiresAt, expiresAt);
                 }
@@ -77,56 +78,3 @@ module.exports = {
         return message.reply(`✅ Successfully purchased ${item}! ${description} Your new balance is ${db.data.users[userId].balance}₩.`);
     },
 };
-
-function getRarity(user) { // Added user parameter
-    const n = Math.random() * 100;
-    let rarity;
-
-    if (user?.luckBoost?.multiplier === 25) { // 25x boost
-        if (n < 0.01) rarity = 'Secret';
-        else if (n < 0.1) rarity = 'Mythic';
-        else if (n < 0.5) rarity = 'Legendary';
-        else if (n < 2) rarity = 'Epic';
-        else if (n < 5) rarity = 'Rare';
-        else rarity = 'Rare';
-    }
-    else if (user?.luckBoost?.multiplier === 10) { // 10x boost: significantly increased chances
-        if (n < 0.02) rarity = 'Secret';  // Buffed Secret
-        else if (n < 0.2) rarity = 'Mythic';    // Buffed Mythic
-        else if (n < 1) rarity = 'Legendary';    // Buffed Legendary
-        else if (n < 5) rarity = 'Epic';       // Buffed Epic
-        else if (n < 15) rarity = 'Rare';     // Buffed Rare
-        else rarity = 'Rare';
-    } else if (user?.luckBoost?.multiplier === 5) { // 5x boost: increased chances, no commons/uncommons
-        if (n < 0.1) rarity = 'Secret';         //was 0.05
-        else if (n < 0.8) rarity = 'Mythic';    //was 0.5
-        else if (n < 4) rarity = 'Legendary';    //was 2.5
-        else if (n < 15) rarity = 'Epic';      //was 10
-        else if (n < 30) rarity = 'Rare';      //was 20
-        else rarity = 'Rare';
-    } else if (user?.luckBoost?.multiplier === 4) {
-        if (n < 0.03) rarity = 'Secret';
-        else if (n < 0.3) rarity = 'Mythic';
-        else if (n < 1.5) rarity = 'Legendary';
-        else if (n < 7.5) rarity = 'Epic';
-        else if (n < 15) rarity = 'Rare';
-        else rarity = 'Uncommon';
-    }
-    else if (user?.luckBoost?.multiplier === 2) { // 2x boost: no commons
-        if (n < 0.05) rarity = 'Secret';
-        else if (n < 0.5) rarity = 'Mythic';
-        else if (n < 2.5) rarity = 'Legendary';
-        else if (n < 10) rarity = 'Epic';
-        else if (n < 20) rarity = 'Rare';
-        else rarity = 'Uncommon';
-    } else {
-        if (n < 0.05) rarity = 'Secret';
-        else if (n < 0.5) rarity = 'Mythic';
-        else if (n < 2.5) rarity = 'Legendary';
-        else if (n < 10) rarity = 'Epic';
-        else if (n < 20) rarity = 'Rare';
-        else if (n < 40) rarity = 'Uncommon';
-        else rarity = 'Common';
-    }
-    return { rarity };
-}
