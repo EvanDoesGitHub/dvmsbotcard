@@ -1,186 +1,257 @@
 const { EmbedBuilder } = require('discord.js');
 
-// Helper function to get card value
-function getCardValue(card) {
-    const rank = card.slice(0, -1); // Remove the suit
-    if (['J', 'Q', 'K'].includes(rank)) return 10;
-    if (rank === 'A') return 11; // Start with Ace as 11, adjust later
-    const value = parseInt(rank, 10);
-    return isNaN(value) ? 0 : value; // Handle invalid card ranks
-}
-
-// Helper function to calculate hand value and adjust Aces
-function getHandValue(hand) {
-    let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
-    let aceCount = hand.filter(card => card.slice(0, -1) === 'A').length;
-
-    while (value > 21 && aceCount > 0) {
-        value -= 10;
-        aceCount--;
-    }
-    return value;
-}
-
-// Helper function to get a random card with emojis
-function getCard() {
-    const suits = ['♠️', '♥️', '♦️', '♣️'];
-    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-    const suit = suits[Math.floor(Math.random() * suits.length)];
-    const rank = ranks[Math.floor(Math.random() * ranks.length)];
-    return `${rank}${suit}`;
-}
-
-// Function to format card display with emojis
-function formatCardDisplay(hand) {
-    return hand.map(card => {
-        const suitEmoji = {
-            '♠️': '♠️',
-            '♥️': '♥️',
-            '♦️': '♦️',
-            '♣️': '♣️',
-        }[card.slice(-1)];
-        return `${card.slice(0, -1)}${suitEmoji}`;
-    }).join(' ');
-}
-
 module.exports = {
-    name: 'blackjack',
-    description: 'Play a game of Blackjack.  Limit is 1000₩.',
-    async execute(message, args, { db }) {
-        try {
-            await db.read();
-            const userId = message.author.id;
-            const user = db.data.users[userId] || { balance: 0 };
-            let balance = user.balance;
+  name: 'blackjack',
+  aliases: ['bj'],
+  description: 'Play a game of Blackjack (limit 1000)',
+  async execute(message, args, { db }) {
+    const userId = message.author.id;
+    const channelId = message.channel.id;
 
-            if (!args.length) {
-                return message.reply('Please specify a bet amount.');
+    // 1. Get or create user data.
+    await db.read();
+    if (!db.data.users[userId]) {
+      db.data.users[userId] = { balance: 0 };
+    }
+    let balance = db.data.users[userId].balance;
+
+    // 2. Validate the bet
+    const bet = parseInt(args[0]);
+    if (isNaN(bet) || bet <= 0) {
+      return message.reply('Please provide a valid bet greater than zero.');
+    }
+    if (bet > balance) {
+      return message.reply(`You don't have enough coins. Your balance is ${balance}₩.`);
+    }
+    if (bet > 1000) {
+        return message.reply(`The maximum bet for Blackjack is 1000₩.`);
+    }
+
+    // 3. Initialize game state
+    const deck = createDeck();
+    const playerHand = [drawCard(deck), drawCard(deck)];
+    const dealerHand = [drawCard(deck), drawCard(deck)];
+    let playerTotal = getHandValue(playerHand);
+    let dealerTotal = getHandValue(dealerHand);
+    let gameOver = false;
+    let gameState = {
+        deck,
+        playerHand,
+        dealerHand,
+        playerTotal,
+        dealerTotal,
+        gameOver,
+        bet
+    };
+
+    // 4. Send initial game message
+    let embed = buildEmbed(gameState, userId, false);
+    const gameMessage = await message.reply({ embeds: [embed] });
+
+    // 5. Add reactions for player actions
+    await gameMessage.react('🇭'); // Hit
+    await gameMessage.react('🇸'); // Stand
+    await gameMessage.react('🇩'); // Double Down - Removed split
+    // await gameMessage.react(' split'); // Split - Removed split
+
+    // 6. Create reaction collector
+    const collector = gameMessage.createReactionCollector({
+        filter: (reaction, user) =>
+            ['🇭', '🇸', '🇩'].includes(reaction.emoji.name) && user.id === userId, //Removed split
+        max: 1,
+        time: 60000, // 60 seconds
+    });
+
+    // 7. Handle player actions
+    collector.on('collect', async (reaction) => {
+        if (gameOver) return; // Prevent actions after game over
+
+        if (reaction.emoji.name === '🇭') { // Hit
+            gameState.playerHand.push(drawCard(gameState.deck));
+            gameState.playerTotal = getHandValue(gameState.playerHand);
+            if (gameState.playerTotal >= 21) {
+                gameState.gameOver = true;
+                determineWinner(gameState);
             }
-
-            const bet = parseInt(args[0], 10);
-
-            if (isNaN(bet) || bet <= 0) {
-                return message.reply('Please enter a valid bet amount (greater than 0).');
-            }
-
-            if (bet > balance) {
-                return message.reply(`You don't have enough money. Your balance is ${balance}₩.`);
-            }
-
-            if (bet > 1000) {
-                return message.reply('The maximum bet for Blackjack is 1000₩.');
-            }
-
-            let playerHand = [getCard(), getCard()];
-            let dealerHand = [getCard(), getCard()];
-            let playerValue = getHandValue(playerHand);
-            let dealerValue = getHandValue(dealerHand);
-            let gameOver = false;
-            let resultEmbed = null; // Declare here
-
-            const embed = new EmbedBuilder()
-                .setTitle('Blackjack Game')
-                .setDescription(`Bet: ${bet}₩`)
-                .addFields(
-                    { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
-                    { name: 'Dealer Hand', value: `${dealerHand[0]} ❓`, inline: true },
-                    { name: 'Your Points', value: String(playerValue), inline: true },
-                    { name: 'Dealer Points', value: '?', inline: true },
-                )
-                .setFooter({ text: 'Type `hit` or `stand`' })
-                .setColor(0x00BFFF); // Blue color for initial game state
-
-            const gameMessage = await message.reply({ embeds: [embed] });
-
-            const filter = m => m.author.id === userId && ['hit', 'stand'].includes(m.content.toLowerCase());
-            const collector = message.channel.createMessageCollector({ filter, time: 120000 });
-
-            collector.on('collect', async m => {
-                try {
-                    const input = m.content.toLowerCase();
-
-                    if (gameOver) return; // Prevent actions after game over
-
-                    if (input === 'hit') {
-                        playerHand.push(getCard());
-                        playerValue = getHandValue(playerHand);
-                        console.log(`Player Hand: ${formatCardDisplay(playerHand)}, Player Value: ${playerValue}`);
-                        embed.setFields(
-                            { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
-                            { name: 'Dealer Hand', value: `${dealerHand[0]} ❓`, inline: true },
-                            { name: 'Your Points', value: String(playerValue), inline: true },
-                            { name: 'Dealer Points', value: '?', inline: true },
-                        );
-                        gameMessage.edit({ embeds: [embed] });
-
-                        if (playerValue >= 21) {
-                            gameOver = true;
-                            collector.stop();
-                        }
-                    } else if (input === 'stand') {
-                        gameOver = true;
-                        collector.stop();
-                    }
-                    m.delete();
-                } catch (error) {
-                    console.error('Error in collector.on(collect):', error);
-                }
-            });
-
-            collector.on('end', async () => {
-                try {
-                    if (!gameOver) {
-                        message.reply('Game ended due to inactivity.');
-                        return;
-                    }
-
-                    while (dealerValue < 17) {
-                        dealerHand.push(getCard());
-                        dealerValue = getHandValue(dealerHand);
-                        console.log(`Dealer Hand: ${formatCardDisplay(dealerHand)}, Dealer Value: ${dealerValue}`);
-                    }
-
-                    console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);
-                    let resultText = '';
-                    let resultColor = 0;
-
-                    if (playerValue > 21) {
-                        resultText = `You Busted! Dealer wins. You lose ${bet}₩.`;
-                        resultColor = 0xFF0000; // Red
-                        user.balance -= bet;
-                    } else if (dealerValue > 21 || playerValue > dealerValue) {
-                        resultText = `You Win! You win ${bet}₩!`;
-                        resultColor = 0x00FF00; // Green
-                        user.balance += bet;
-                    } else if (playerValue === dealerValue) {
-                        resultText = 'Tie Game! You get your bet back.';
-                        resultColor = 0xFFFF00; // Yellow
-                    } else {
-                        resultText = `Dealer Wins! You lose ${bet}₩.`;
-                        resultColor = 0xFF0000; // Red
-                        user.balance -= bet;
-                    }
-                    // Ensure balance doesn't go below 0
-                    user.balance = Math.max(0, user.balance);
-                    await db.write();
-                    resultEmbed = new EmbedBuilder()
-                        .setTitle(resultText.split('!')[0] + '!') // Use only the first part before "!"
-                        .setDescription(resultText.substring(resultText.indexOf(' ') + 1))
-                        .setColor(resultColor)
-                        .addFields(
-                            { name: 'Your Hand', value: formatCardDisplay(playerHand), inline: true },
-                            { name: 'Dealer Hand', value: formatCardDisplay(dealerHand), inline: true }, // Use formatCardDisplay here
-                            { name: 'Your Points', value: String(playerValue), inline: true },
-                            { name: 'Dealer Points', value: String(dealerValue), inline: true },
-                        );
-                    gameMessage.edit({ embeds: [embed, resultEmbed] });
-                } catch (error) {
-                    console.error('Error in collector.on(end):', error);
-                }
-            });
-        } catch (error) {
-            console.error('Error in blackjack command:', error);
-            message.reply('An error occurred while playing Blackjack. Please try again.');
+            await gameMessage.edit({ embeds: [buildEmbed(gameState, userId, false)] });
         }
-    },
+
+        if (reaction.emoji.name === '🇸') { // Stand
+            gameState.gameOver = true;
+            determineWinner(gameState);
+            await gameMessage.edit({ embeds: [buildEmbed(gameState, userId, true)] });
+
+        }
+
+        if (reaction.emoji.name === '🇩') { // Double Down
+            if (gameState.playerHand.length !== 2) {
+                return message.reply("You can only double down on your first move!");
+            }
+            if (balance < bet * 2) {
+                 return message.reply("You don't have enough money to double down!");
+            }
+            gameState.bet *= 2;
+            gameState.playerHand.push(drawCard(gameState.deck));
+            gameState.playerTotal = getHandValue(gameState.playerHand);
+            gameState.gameOver = true;
+            determineWinner(gameState);
+            await gameMessage.edit({ embeds: [buildEmbed(gameState, userId, true)] });
+        }
+
+
+
+        if (gameState.gameOver) {
+            // Update the database with the result
+            db.data.users[userId].balance += gameState.result;
+            await db.write();
+            collector.stop();
+        }
+    });
+
+    collector.on('end', collected => {
+      if (!collected.size && !gameState.gameOver) {
+        message.reply('You ran out of time!');
+        gameState.gameOver = true;
+        determineWinner(gameState);
+         db.data.users[userId].balance += gameState.result;
+         db.write();
+        gameMessage.edit({embeds: [buildEmbed(gameState, userId, true)]});
+      }
+    });
+  },
 };
+
+// Helper Functions
+/**
+ * Creates a standard 52-card deck.
+ * @returns {Array} An array representing the deck of cards.
+ */
+function createDeck() {
+    const suits = ['C', 'D', 'H', 'S']; // Clubs, Diamonds, Hearts, Spades
+    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const deck = [];
+
+    for (const suit of suits) {
+        for (const value of values) {
+            deck.push({ suit, value });
+        }
+    }
+    // Shuffle the deck using the Fisher-Yates algorithm
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+}
+
+/**
+ * Draws a card from the deck.
+ * @param {Array} deck The deck of cards.
+ * @returns {Object} The card drawn from the deck.
+ */
+function drawCard(deck) {
+    if (deck.length === 0) {
+        // Handle empty deck scenario (e.g., reshuffle or throw error)
+        return null; // Or throw an error: throw new Error("Deck is empty");
+    }
+    return deck.pop();
+}
+
+/**
+ * Calculates the value of a hand of cards.
+ * @param {Array} hand An array of cards in the hand.
+ * @returns {number} The total value of the hand.
+ */
+function getHandValue(hand) {
+    let total = 0;
+    let hasAce = false;
+
+    for (const card of hand) {
+        let cardValue = parseInt(card.value);
+        if (card.value === 'J' || card.value === 'Q' || card.value === 'K') {
+            cardValue = 10;
+        } else if (card.value === 'A') {
+            hasAce = true;
+            cardValue = 11;
+        }
+        total += cardValue;
+    }
+
+    if (hasAce && total > 21) {
+        total -= 10; // Convert Ace from 11 to 1
+    }
+
+    return total;
+}
+
+/**
+ * Determines the winner of the Blackjack game.
+ * @param {object} gameState
+ * @returns {string} The result of the game.
+ */
+function determineWinner(gameState) {
+    const playerTotal = gameState.playerTotal;
+    const dealerTotal = gameState.dealerTotal;
+    const bet = gameState.bet;
+
+    while (dealerTotal < 17) {
+        gameState.dealerHand.push(drawCard(gameState.deck));
+        gameState.dealerTotal = getHandValue(gameState.dealerHand);
+    }
+
+    if (playerTotal > 21) {
+        gameState.result = -bet; // Player busts, loses bet
+        return "Dealer wins! (Player Bust)";
+    } else if (dealerTotal > 21) {
+        gameState.result = bet; // Dealer busts, player wins bet
+        return "Player wins! (Dealer Bust)";
+    } else if (playerTotal === dealerTotal) {
+        gameState.result = 0; // Tie, no change in balance
+        return "Tie!";
+    } else if (playerTotal > dealerTotal) {
+        gameState.result = bet; // Player wins
+        return "Player wins!";
+    } else {
+        gameState.result = -bet; // Dealer wins
+        return "Dealer wins!";
+    }
+}
+
+/**
+ * Builds an embed message to display the current game state.
+ * @param {object} gameState The current state of the game.
+ * @param {string} userId The ID of the player.
+ * @param {boolean} showDealerHand Flag to show the dealer's full hand.
+ * @returns {EmbedBuilder} The embed message.
+ */
+function buildEmbed(gameState, userId, showDealerHand) {
+    const playerHand = gameState.playerHand;
+    const dealerHand = gameState.dealerHand;
+    const playerTotal = gameState.playerTotal;
+    const dealerTotal = gameState.dealerTotal;
+    const bet = gameState.bet;
+
+    let playerHandString = playerHand.map(card => `${card.value}${card.suit}`).join(' ');
+    let dealerHandString = showDealerHand
+        ? dealerHand.map(card => `${card.value}${card.suit}`).join(' ')
+        : `${dealerHand[0].value}${dealerHand[0].suit} X`; // Hide first card
+
+    let title = 'Blackjack Game';
+    let description = `Player: <@${userId}>\nBet: ${bet}₩\n\n`;
+
+    description += `Player Hand: ${playerHandString} (${playerTotal})\n`;
+    description += `Dealer Hand: ${dealerHandString} ${showDealerHand ? `(${dealerTotal})` : ''}\n\n`;
+
+    if (gameState.gameOver) {
+        description += `**${determineWinner(gameState)}**\n`;
+        description += `Player Balance: ${gameState.result >= 0 ? '+' : ''}${gameState.result}₩\n`;
+    } else {
+        description += 'Hit (🇭), Stand (🇸), Double Down (🇩)'; //, Split ( ).
+    }
+
+    const embed = new EmbedBuilder()
+        .setTitle(title)
+        .setDescription(description);
+
+    return embed;
+}
