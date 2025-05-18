@@ -1,222 +1,222 @@
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-  name: 'drop',
-  async execute(message, args, { cards, db }) {
-    try {
-      // Dynamically import nanoid
-      const { nanoid } = await import('nanoid');
-
-      try {
-        await db.read();
-      } catch (error) {
-        console.error("Error reading from database:", error, { userId: message.author.id });
-        message.reply("Error: Failed to read from the database.");
-        return;
-      }
-
-      const dropperId = message.author.id;
-      const now = Date.now();
-      const HOUR = 60 * 60 * 1000;
-      const BYPASS_USER_ID = '722463127782031400';
-
-      let user = db.data?.users?.[dropperId]; // Added null/undefined checks with optional chaining
-      if (!user) {
-        user = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
-        if (!db.data) db.data = { users: {} }; // Ensure db.data exists
-        db.data.users[dropperId] = user;
-        console.log(`Creating new user: ${dropperId}`); // Added logging
-      }
-
-      // reset or check cooldown
-      if (dropperId !== BYPASS_USER_ID) {
-        if (user.cooldownEnd && now >= user.cooldownEnd) {
-          user.lastDrops = [];
-          user.cooldownEnd = 0;
-        }
-        if (user.cooldownEnd && now < user.cooldownEnd) {
-          const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
-            timeZone: 'America/Toronto',
-            hour12: false,
-          });
-          return message.reply(`⏳ You've used all 10 drops. Resets at **${resetTime}**.`);
-        }
-        user.lastDrops = user.lastDrops?.filter((ts) => now - ts < HOUR) || []; // Added null check
-        if ((user.lastDrops?.length || 0) >= 10) { // Added null check
-          user.cooldownEnd = now + HOUR;
-          try {
-            await db.write();
-          } catch (error) {
-            console.error("Error writing to database (cooldown):", error, { userId: message.author.id });
-            message.reply("Error: Failed to write to the database.");
-            return;
-          }
-          const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
-            timeZone: 'America/Toronto',
-            hour12: false,
-          });
-          return message.reply(`⏳ Hit 10 drops. Resets at **${resetTime}**.`);
-        }
-        user.lastDrops.push(now);
+    name: 'drop',
+    async execute(message, args, { cards, db }) {
         try {
-          await db.write();
+            // Dynamically import nanoid
+            const { nanoid } = await import('nanoid');
+
+            try {
+                await db.read();
+            } catch (error) {
+                console.error("Error reading from database:", error, { userId: message.author.id });
+                message.reply("Error: Failed to read from the database.");
+                return;
+            }
+
+            const dropperId = message.author.id;
+            const now = Date.now();
+            const HOUR = 60 * 60 * 1000;
+            const BYPASS_USER_ID = '722463127782031400';
+
+            let user = db.data?.users?.[dropperId]; // Added null/undefined checks with optional chaining
+            if (!user) {
+                user = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
+                if (!db.data) db.data = { users: {} }; // Ensure db.data exists
+                db.data.users[dropperId] = user;
+                console.log(`Creating new user: ${dropperId}`); // Added logging
+            }
+
+            // reset or check cooldown
+            if (dropperId !== BYPASS_USER_ID) {
+                if (user.cooldownEnd && now >= user.cooldownEnd) {
+                    user.lastDrops = [];
+                    user.cooldownEnd = 0;
+                }
+                if (user.cooldownEnd && now < user.cooldownEnd) {
+                    const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
+                        timeZone: 'America/Toronto',
+                        hour12: false,
+                    });
+                    return message.reply(`⏳ You've used all 10 drops. Resets at **${resetTime}**.`);
+                }
+                user.lastDrops = user.lastDrops?.filter((ts) => now - ts < HOUR) || []; // Added null check
+                if ((user.lastDrops?.length || 0) >= 10) { // Added null check
+                    user.cooldownEnd = now + HOUR;
+                    try {
+                        await db.write();
+                    } catch (error) {
+                        console.error("Error writing to database (cooldown):", error, { userId: message.author.id });
+                        message.reply("Error: Failed to write to the database.");
+                        return;
+                    }
+                    const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
+                        timeZone: 'America/Toronto',
+                        hour12: false,
+                    });
+                    return message.reply(`⏳ Hit 10 drops. Resets at **${resetTime}**.`);
+                }
+                user.lastDrops.push(now);
+                try {
+                    await db.write();
+                } catch (error) {
+                    console.error("Error writing to database (lastDrops):", error, { userId: message.author.id });
+                    message.reply("Error: Failed to write to the database.");
+                    return;
+                }
+            }
+
+            const remaining =
+                dropperId === BYPASS_USER_ID ? 'unlimited' : 10 - (user.lastDrops?.length || 0); // Added null check
+
+            // pick rarity→card
+            const { rarity } = getRarity(user); // Pass the user object to getRarity
+            // **Crucial Check:** Make sure 'cards' is an array before filtering
+            if (!Array.isArray(cards)) {
+                console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
+                return message.reply("Error: Card data is not loaded correctly.");
+            }
+            const pool = cards.filter((c) => c.rarity === rarity);
+            if (!pool.length) return message.reply(`No **${rarity}** cards.`);
+            const selected = pool[Math.floor(Math.random() * pool.length)];
+
+            //Check if selected is valid
+            if (!selected) {
+                console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity, { userId: message.author.id });
+                message.reply("Error: Could not select a card.");
+                return;
+            }
+            // shiny?
+            const isShiny = Math.random() < 1 / 40;
+            const sparkle = isShiny ? '✨' : '';
+            const baseValue = isShiny ? Math.ceil(selected.value * 1.4) : selected.value;
+
+            // condition
+            const condition = randomCondition();
+            const modifier = { Poor: -0.15, Great: 0.15, Average: 0 }[condition] || 0; //added default
+            const finalValue = Math.ceil(baseValue * (1 + modifier));
+
+            // build embed
+            let desc = `A **${selected.rarity}** card dropped! React ✅ to claim.`;
+            desc += `\nYou have **${remaining}** drops left this hour.`;
+            if (remaining !== 'unlimited' && remaining <= 2)
+                desc += `\n⚠️ Only ${remaining} left!`;
+            if (isShiny) desc = `✨ **SHINY CARD** ✨\n` + desc;
+
+            const embed = new EmbedBuilder()
+                .setTitle(`${sparkle}${selected.title} — ${condition}`)
+                .setDescription(desc)
+                .setImage(selected.image) // Use String, not object
+                .setFooter({ text: `Value: ${finalValue}₩` });
+
+            let dropMsg;
+            try {
+                dropMsg = await message.reply({ embeds: [embed] });
+                await dropMsg.react('✅');
+            } catch (error) {
+                console.error("Error sending message or reacting:", error, { userId: message.author.id });
+                message.reply("Error: Failed to send drop message or add reaction.");
+                return;
+            }
+
+
+            // allow anyone (except bots) to claim
+            const collector = dropMsg.createReactionCollector({
+                filter: (reaction, reactor) =>
+                    reaction.emoji.name === '✅' && !reactor.bot,
+                max: 1,
+                time: 60000,
+            });
+
+            collector.on('collect', async (reaction, reactor) => {
+                try {
+                    const claimerId = reactor.id;
+                    await db.read();
+                    let claimer = db.data?.users?.[claimerId]; // Added null/undefined checks with optional chaining
+                    if (!claimer) {
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 }; // changed here too
+                        if (!db.data) db.data = { users: {} }; // Ensure db.data exists
+                        db.data.users[claimerId] = claimer;
+                        console.log(`Creating new user (claimer): ${claimerId}`); // Added logging
+                    }
+
+                    // store only cardId + instance, value/title etc looked up later
+                    claimer.inventory.push({
+                        cardId: selected.id,
+                        instanceId: nanoid(), // Use nanoid here
+                        shiny: isShiny,
+                        condition,
+                        acquired: Date.now(),
+                    });
+                    try {
+                        await db.write();
+                        console.log(`Card claimed by: ${claimerId}`);
+                    } catch (e) {
+                        console.error("Error writing to database (card claim):", error, { userId: claimerId });
+                        message.reply("Error: Failed to write to the database after claim.");
+                        return;
+                    }
+
+
+                    message.channel.send(
+                        `🎉 <@${claimerId}> picked up **${selected.title}** (${selected.rarity}) ${sparkle}!`
+                    );
+                } catch (error) {
+                    console.error("Error in collect event:", error, { userId: reactor.id }); //catch errors
+                }
+            });
+
+            collector.on('end', async (collected) => {
+                try {
+                    if (!collected.size) {
+                        const timedOut = EmbedBuilder.from(embed).setDescription(
+                            desc + `\n\n⌛ **Time's up!**`
+                        );
+                        await dropMsg.edit({ embeds: [timedOut] });
+                    }
+                } catch (error) {
+                    console.error("Error in end event", error, { messageId: dropMsg.id });
+                }
+            });
         } catch (error) {
-          console.error("Error writing to database (lastDrops):", error, { userId: message.author.id });
-          message.reply("Error: Failed to write to the database.");
-          return;
+            console.error("Error in drop command:", error, { userId: message.author.id });
+            message.reply("An error occurred while processing the drop."); // send message to channel
         }
-      }
-
-      const remaining =
-        dropperId === BYPASS_USER_ID ? 'unlimited' : 10 - (user.lastDrops?.length || 0); // Added null check
-
-      // pick rarity→card
-      const { rarity } = getRarity(user); // Pass the user object to getRarity
-      // **Crucial Check:** Make sure 'cards' is an array before filtering
-      if (!Array.isArray(cards)) {
-        console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
-        return message.reply("Error: Card data is not loaded correctly.");
-      }
-      const pool = cards.filter((c) => c.rarity === rarity);
-      if (!pool.length) return message.reply(`No **${rarity}** cards.`);
-      const selected = pool[Math.floor(Math.random() * pool.length)];
-
-      //Check if selected is valid
-      if (!selected) {
-        console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity, { userId: message.author.id });
-        message.reply("Error: Could not select a card.");
-        return;
-      }
-      // shiny?
-      const isShiny = Math.random() < 1 / 40;
-      const sparkle = isShiny ? '✨' : '';
-      const baseValue = isShiny ? Math.ceil(selected.value * 1.4) : selected.value;
-
-      // condition
-      const condition = randomCondition();
-      const modifier = { Poor: -0.15, Great: 0.15, Average: 0 }[condition] || 0; //added default
-      const finalValue = Math.ceil(baseValue * (1 + modifier));
-
-      // build embed
-      let desc = `A **${selected.rarity}** card dropped! React ✅ to claim.`;
-      desc += `\nYou have **${remaining}** drops left this hour.`;
-      if (remaining !== 'unlimited' && remaining <= 2)
-        desc += `\n⚠️ Only ${remaining} left!`;
-      if (isShiny) desc = `✨ **SHINY CARD** ✨\n` + desc;
-
-      const embed = new EmbedBuilder()
-        .setTitle(`${sparkle}${selected.title} — ${condition}`)
-        .setDescription(desc)
-        .setImage(selected.image) // Use String, not object
-        .setFooter({ text: `Value: ${finalValue}₩` });
-
-      let dropMsg;
-      try {
-        dropMsg = await message.reply({ embeds: [embed] });
-        await dropMsg.react('✅');
-      } catch (error) {
-        console.error("Error sending message or reacting:", error, { userId: message.author.id });
-        message.reply("Error: Failed to send drop message or add reaction.");
-        return;
-      }
-
-
-      // allow anyone (except bots) to claim
-      const collector = dropMsg.createReactionCollector({
-        filter: (reaction, reactor) =>
-          reaction.emoji.name === '✅' && !reactor.bot,
-        max: 1,
-        time: 60000,
-      });
-
-      collector.on('collect', async (reaction, reactor) => {
-        try {
-          const claimerId = reactor.id;
-          await db.read();
-          let claimer = db.data?.users?.[claimerId]; // Added null/undefined checks with optional chaining
-          if (!claimer) {
-            claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 }; // changed here too
-            if (!db.data) db.data = { users: {} }; // Ensure db.data exists
-            db.data.users[claimerId] = claimer;
-            console.log(`Creating new user (claimer): ${claimerId}`); // Added logging
-          }
-
-          // store only cardId + instance, value/title etc looked up later
-          claimer.inventory.push({
-            cardId: selected.id,
-            instanceId: nanoid(), // Use nanoid here
-            shiny: isShiny,
-            condition,
-            acquired: Date.now(),
-          });
-          try {
-            await db.write();
-            console.log(`Card claimed by: ${claimerId}`);
-          } catch (e) {
-            console.error("Error writing to database (card claim):", error, { userId: claimerId });
-            message.reply("Error: Failed to write to the database after claim.");
-            return;
-          }
-
-
-          message.channel.send(
-            `🎉 <@${claimerId}> picked up **${selected.title}** (${selected.rarity}) ${sparkle}!`
-          );
-        } catch (error) {
-          console.error("Error in collect event:", error, { userId: reactor.id }); //catch errors
-        }
-      });
-
-      collector.on('end', async (collected) => {
-        try {
-          if (!collected.size) {
-            const timedOut = EmbedBuilder.from(embed).setDescription(
-              desc + `\n\n⌛ **Time's up!**`
-            );
-            await dropMsg.edit({ embeds: [timedOut] });
-          }
-        } catch (error) {
-          console.error("Error in end event", error, { messageId: dropMsg.id });
-        }
-      });
-    } catch (error) {
-      console.error("Error in drop command:", error, { userId: message.author.id });
-      message.reply("An error occurred while processing the drop."); // send message to channel
-    }
-  },
+    },
 };
 
 // Helpers
 function getRarity(user) { // Added user parameter
-  const n = Math.random() * 100;
-  let rarity;
+    const n = Math.random() * 100;
+    let rarity;
 
-  if (user?.luckBoost?.multiplier === 5) { // 5x boost: increased chances, no commons/uncommons
-    if (n < 0.1) rarity = 'Secret';         //was 0.05
-    else if (n < 0.8) rarity = 'Mythic';    //was 0.5
-    else if (n < 4) rarity = 'Legendary';   //was 2.5
-    else if (n < 15) rarity = 'Epic';      //was 10
-    else if (n < 30) rarity = 'Rare';      //was 20
-    else rarity = 'Rare';                  // make sure it doesnt return undefined
-  } else if (user?.luckBoost?.multiplier === 2) { // 2x boost: no commons
-    if (n < 0.05) rarity = 'Secret';
-    else if (n < 0.5) rarity = 'Mythic';
-    else if (n < 2.5) rarity = 'Legendary';
-    else if (n < 10) rarity = 'Epic';
-    else if (n < 20) rarity = 'Rare';
-    else rarity = 'Uncommon';
-  } else {
-    if (n < 0.05) rarity = 'Secret';
-    else if (n < 0.5) rarity = 'Mythic';
-    else if (n < 2.5) rarity = 'Legendary';
-    else if (n < 10) rarity = 'Epic';
-    else if (n < 20) rarity = 'Rare';
-    else if (n < 40) rarity = 'Uncommon';
-    else rarity = 'Common';
-  }
-  return { rarity };
+    if (user?.luckBoost?.multiplier === 5) { // 5x boost: increased chances, no commons/uncommons
+        if (n < 0.1) rarity = 'Secret';        //was 0.05
+        else if (n < 0.8) rarity = 'Mythic';      //was 0.5
+        else if (n < 4) rarity = 'Legendary';    //was 2.5
+        else if (n < 15) rarity = 'Epic';      //was 10
+        else if (n < 30) rarity = 'Rare';        //was 20
+        else rarity = 'Rare';
+    } else if (user?.luckBoost?.multiplier === 2) { // 2x boost: no commons
+        if (n < 0.05) rarity = 'Secret';
+        else if (n < 0.5) rarity = 'Mythic';
+        else if (n < 2.5) rarity = 'Legendary';
+        else if (n < 10) rarity = 'Epic';
+        else if (n < 20) rarity = 'Rare';
+        else rarity = 'Uncommon';
+    } else {
+        if (n < 0.05) rarity = 'Secret';
+        else if (n < 0.5) rarity = 'Mythic';
+        else if (n < 2.5) rarity = 'Legendary';
+        else if (n < 10) rarity = 'Epic';
+        else if (n < 20) rarity = 'Rare';
+        else if (n < 40) rarity = 'Uncommon';
+        else rarity = 'Common';
+    }
+    return { rarity };
 }
 function randomCondition() {
-  const a = ['Poor', 'Average', 'Great'];
-  return a[Math.floor(Math.random() * a.length)];
+    const a = ['Poor', 'Average', 'Great'];
+    return a[Math.floor(Math.random() * a.length)];
 }
