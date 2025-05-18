@@ -1,4 +1,3 @@
-// buy.js
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -68,10 +67,9 @@ module.exports = {
             };
         }
         await db.write();
-        if (item === 'cardpack'){
-             return message.reply(`✅ Successfully purchased ${item}! ${description} You now have ${dropsAvailable} drops available and your balance is ${db.data.users[userId].balance}₩.`);
-        }
-        else{
+        if (item === 'cardpack') {
+            return message.reply(`✅ Successfully purchased ${item}! ${description} You now have ${dropsAvailable} drops available and your balance is ${db.data.users[userId].balance}₩.`);
+        } else {
             return message.reply(`✅ Successfully purchased ${item}! ${description} Your new balance is ${db.data.users[userId].balance}₩.`);
         }
 
