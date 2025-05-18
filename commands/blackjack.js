@@ -66,6 +66,9 @@ module.exports = {
     collector.on('collect', async (reaction) => {
         if (gameOver) return; // Prevent actions after game over
 
+        // Remove the user's reaction
+        await reaction.users.remove(userId);
+
         if (reaction.emoji.name === '🇭') { // Hit
             gameState.playerHand.push(drawCard(gameState.deck));
             gameState.playerTotal = getHandValue(gameState.playerHand);
