@@ -1,5 +1,4 @@
 const { EmbedBuilder } = require('discord.js');
-const { nanoid } = require('nanoid');
 
 // Helper function for card rarity
 function getRarity(user) {
@@ -119,7 +118,7 @@ module.exports = {
             }
 
             // Reset or check cooldown
-             if (dropperId !== BYPASS_USER_ID) {
+            if (dropperId !== BYPASS_USER_ID) {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
@@ -208,13 +207,22 @@ module.exports = {
                     }
 
                     // store only cardId + instance, value/title etc looked up later
-                    const cardInstance = {
-                        cardId: selected.id,
-                        instanceId: nanoid(),
-                        shiny: isShiny,
-                        condition: condition,
-                        acquired: Date.now(),
-                    };
+                    let cardInstance;
+                    try{
+                         const { nanoid } = await import('nanoid');
+                         cardInstance = {
+                            cardId: selected.id,
+                            instanceId: nanoid(),
+                            shiny: isShiny,
+                            condition: condition,
+                            acquired: Date.now(),
+                        };
+                    } catch(e){
+                        console.error("Failed to import nanoid", e);
+                        return message.reply("Error: Failed to generate unique card ID.");
+                    }
+
+
                     claimer.inventory.push(cardInstance);
 
                     try {
@@ -249,7 +257,7 @@ module.exports = {
             // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                 if (user.luckBoost?.dropsRemaining > 0) {
+                if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
                     if (user.luckBoost.dropsRemaining <= 0) {
                         user.luckBoost = null;
