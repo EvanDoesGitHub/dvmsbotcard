@@ -1,4 +1,4 @@
-const ROB_CHANCE = 0.3; // 30% chance of getting caught
+const ROB_CHANCE = 0.3; // 30% chance of getting caught (default)
 const ROB_MULTIPLIER = 0.1; // Steal 10% of the target's balance
 const FINE_MULTIPLIER = 1.2; // Pay 20% more than you tried to steal
 const COOLDOWN_TIME = 600000; // 10 minutes in milliseconds
@@ -22,10 +22,10 @@ module.exports = {
 
         // Initialize user data if they don't exist
         if (!db.data.users[robberId]) {
-            db.data.users[robberId] = { balance: 0, cooldown: 0 };
+            db.data.users[robberId] = { balance: 0, cooldown: 0, balanceLockExpiry: null }; // Add balanceLockExpiry
         }
         if (!db.data.users[targetId]) {
-            db.data.users[targetId] = { balance: 0, cooldown: 0 };
+            db.data.users[targetId] = { balance: 0, cooldown: 0, balanceLockExpiry: null }; // Add balanceLockExpiry
         }
 
         const robber = db.data.users[robberId];
@@ -36,6 +36,13 @@ module.exports = {
         if (robber.cooldown > now) {
             const timeLeft = (robber.cooldown - now) / 1000;
             return message.reply(`You can rob again in ${timeLeft.toFixed(0)} seconds.`);
+        }
+
+        // Check for target's balance lock
+        let caught = false;
+        if (target.balanceLockExpiry && target.balanceLockExpiry > now) {
+            caught = true; // Always get caught if target has a lock
+            target.balanceLockExpiry = null; // Remove the lock
         }
 
         if (target.cooldown > now) {
@@ -53,7 +60,7 @@ module.exports = {
         const stolenAmount = Math.floor(targetBalance * ROB_MULTIPLIER);
         const fineAmount = Math.floor(stolenAmount * FINE_MULTIPLIER);
 
-        if (Math.random() < ROB_CHANCE) { // Robber gets caught
+        if (Math.random() < ROB_CHANCE || caught) { // Robber gets caught, always if caught is true
             robber.balance -= fineAmount;
             target.balance += fineAmount;
             robber.cooldown = now + COOLDOWN_TIME;
