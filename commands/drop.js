@@ -110,7 +110,7 @@ module.exports = {
                     cooldownEnd: 0,
                     inventory: [],
                     balance: 0,
-                    dropsAvailable: 10, // give 3 drops as default
+                    dropsAvailable: 10, // give 10 drops as default
                     luckBoost: null
                 };
                 if (!db.data) db.data = { users: {} };
@@ -127,21 +127,23 @@ module.exports = {
                 }
 
                 if (user.cooldownEnd && now < user.cooldownEnd) {
+                    const timeDiff = user.cooldownEnd - now;
+                    const minutes = Math.ceil(timeDiff / (60 * 1000));
                     const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
                         timeZone: 'America/Toronto',
                         hour12: false,
                     });
-                    return message.reply(`⏳ You've used all your drops. Resets at **${resetTime}**.`);
+                    return message.reply(`⏳ You've used all your drops. Resets in **${minutes} minutes** at ${resetTime}.  You can also buy more in the shop!`);
                 }
 
                 if (user.dropsAvailable <= 0) {
-                     user.cooldownEnd = now + COOLDOWN_DURATION;
-                     try{
+                    user.cooldownEnd = now + COOLDOWN_DURATION;
+                    try {
                         await db.write();
-                     } catch(e){
+                    } catch (e) {
                         console.error("Error writing to db", e);
-                     }
-                    return message.reply('You have no more card drops available!  They will reset in 1 hour.');
+                    }
+                    return message.reply('You have no more card drops available! They will reset in 1 hour. You can also buy more in the shop!');
                 }
             }
 
@@ -217,16 +219,16 @@ module.exports = {
 
                     // store only cardId + instance, value/title etc looked up later
                     let cardInstance;
-                    try{
-                         const { nanoid } = await import('nanoid');
-                         cardInstance = {
+                    try {
+                        const { nanoid } = await import('nanoid');
+                        cardInstance = {
                             cardId: selected.id,
                             instanceId: nanoid(),
                             shiny: isShiny,
                             condition: condition,
                             acquired: Date.now(),
                         };
-                    } catch(e){
+                    } catch (e) {
                         console.error("Failed to import nanoid", e);
                         return message.reply("Error: Failed to generate unique card ID.");
                     }
