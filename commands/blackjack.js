@@ -2,15 +2,17 @@ const { EmbedBuilder } = require('discord.js');
 
 // Helper function to get card value
 function getCardValue(card) {
-    if (['J', 'Q', 'K'].includes(card)) return 10;
-    if (card === 'A') return 11; // Start with Ace as 11, adjust later
-    return parseInt(card, 10);
+    const rank = card.slice(0, -1); // Remove the suit
+    if (['J', 'Q', 'K'].includes(rank)) return 10;
+    if (rank === 'A') return 11; // Start with Ace as 11, adjust later
+    const value = parseInt(rank, 10);
+    return isNaN(value) ? 0 : value; // Handle invalid card ranks
 }
 
 // Helper function to calculate hand value and adjust Aces
 function getHandValue(hand) {
     let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
-    let aceCount = hand.filter(card => card === 'A').length;
+    let aceCount = hand.filter(card => card.slice(0, -1) === 'A').length;
 
     while (value > 21 && aceCount > 0) {
         value -= 10;
@@ -135,30 +137,30 @@ module.exports = {
                         { name: 'Dealer Points', value: dealerPointsValue, inline: true },
                     );
                     console.log(`Final Player Value: ${playerValue}, Final Dealer Value: ${dealerValue}`);  //important
+                    let resultText = '';
+                    let resultColor = 0;
+
                     if (playerValue > 21) {
-                        resultEmbed = new EmbedBuilder()
-                            .setTitle('You Busted!')
-                            .setDescription(`Dealer wins. You lose ${bet}₩.`)
-                            .setColor(0xFF0000); // Red
+                        resultText = `You Busted! Dealer wins. You lose ${bet}₩.`;
+                        resultColor = 0xFF0000; // Red
                         user.balance -= bet;
                     } else if (dealerValue > 21 || playerValue > dealerValue) {
-                        resultEmbed = new EmbedBuilder()
-                            .setTitle('You Win!')
-                            .setDescription(`You win ${bet}₩!`)
-                            .setColor(0x00FF00); // Green
+                        resultText = `You Win! You win ${bet}₩!`;
+                        resultColor = 0x00FF00; // Green
                         user.balance += bet;
                     } else if (playerValue === dealerValue) {
-                        resultEmbed = new EmbedBuilder()
-                            .setTitle('Tie Game')
-                            .setDescription('You get your bet back.')
-                            .setColor(0xFFFF00); // Yellow
+                        resultText = 'Tie Game! You get your bet back.';
+                        resultColor = 0xFFFF00; // Yellow
                     } else {
-                        resultEmbed = new EmbedBuilder()
-                            .setTitle('Dealer Wins!')
-                            .setDescription(`You lose ${bet}₩.`)
-                            .setColor(0xFF0000); // Red
+                        resultText = `Dealer Wins! You lose ${bet}₩.`;
+                        resultColor = 0xFF0000; // Red
                         user.balance -= bet;
                     }
+
+                    resultEmbed = new EmbedBuilder()
+                        .setTitle(resultText.split('!')[0] + '!') // Use only the first part before "!"
+                        .setDescription(resultText.substring(resultText.indexOf(' ') + 1))
+                        .setColor(resultColor);
                     await db.write();
                     gameMessage.edit({ embeds: [embed, resultEmbed] });
                 } catch (error) {
