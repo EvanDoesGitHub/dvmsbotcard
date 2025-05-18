@@ -25,10 +25,10 @@ module.exports = {
       if (card.condition === 'Great') conditionMultiplier = 1.15;
       const finalValue = Math.ceil(baseValue * conditionMultiplier);
 
-      const shinyCode    = card.shiny    ? '1' : '0';
-      const conditionCode= card.condition==='Poor' ? '3'
-                          : card.condition==='Great'? '4'
-                          : '2';
+      const shinyCode = card.shiny ? '1' : '0';
+      const conditionCode = card.condition === 'Poor' ? '3'
+        : card.condition === 'Great' ? '4'
+          : '2';
       const groupKey = `${card.cardId}.${shinyCode}.${conditionCode}`;
 
       if (!groups[groupKey]) {
@@ -37,7 +37,8 @@ module.exports = {
             ...baseCard,
             shiny: card.shiny,
             condition: card.condition,
-            value: finalValue
+            value: finalValue,
+            protected: card.protected, // Include protected status
           },
           count: 0
         };
@@ -48,14 +49,14 @@ module.exports = {
 
     // convert to array and sort by descending group worth
     const cardGroups = Object.entries(groups).sort((a, b) => {
-      const [ , A ] = a;
-      const [ , B ] = b;
+      const [, A] = a;
+      const [, B] = b;
       return (B.cardInfo.value * B.count) - (A.cardInfo.value * A.count);
     });
 
     const itemsPerPage = 5;
-    const totalPages   = Math.ceil(cardGroups.length / itemsPerPage);
-    let currentPage    = 0;
+    const totalPages = Math.ceil(cardGroups.length / itemsPerPage);
+    let currentPage = 0;
 
     const createEmbed = page => {
       const embed = new EmbedBuilder()
@@ -68,18 +69,19 @@ module.exports = {
         .setColor(0x00AE86);
 
       const slice = cardGroups.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
-      for (const [groupKey, { cardInfo, count }] of slice) {
-        const groupWorth   = cardInfo.value * count;
-        const shinyLabel   = cardInfo.shiny ? '✨ SHINY CARD ✨' : '';
-        const conditionLbl = cardInfo.condition === 'Poor'  ? '⚠️ Poor Condition'
-                            : cardInfo.condition === 'Great'? '🌟 Great Condition'
-                            : '🔹 Average Condition';
+      for (const [groupKey, { cardInfo, count, protected }] of slice) { // Destructure protected
+        const groupWorth = cardInfo.value * count;
+        const shinyLabel = cardInfo.shiny ? '✨ SHINY CARD ✨' : '';
+        const conditionLbl = cardInfo.condition === 'Poor' ? '⚠️ Poor Condition'
+          : cardInfo.condition === 'Great' ? '🌟 Great Condition'
+            : '🔹 Average Condition';
+        const protectedLabel = protected ? '🔒 Protected' : ''; // New protected label
 
         embed.addFields({
-          name:  `ID: **${groupKey}** — ${cardInfo.title} ${shinyLabel} ${conditionLbl}`,
+          name: `ID: **${groupKey}** — ${cardInfo.title} ${shinyLabel} ${conditionLbl} ${protectedLabel}`, // Added protectedLabel to name
           value: `Quantity: ${count}\n` +
-                 `Value per card: ${cardInfo.value}₩\n` +
-                 `Group worth: ${groupWorth}₩`,
+            `Value per card: ${cardInfo.value}₩\n` +
+            `Group worth: ${groupWorth}₩`,
           inline: false
         });
       }
@@ -105,12 +107,12 @@ module.exports = {
     await sent.react('⏩');
 
     const filter = (reaction, user) =>
-      ['⏪','⏩'].includes(reaction.emoji.name) && user.id === message.author.id;
+      ['⏪', '⏩'].includes(reaction.emoji.name) && user.id === message.author.id;
     const collector = sent.createReactionCollector({ filter, time: 60000 });
 
     collector.on('collect', reaction => {
-      if (reaction.emoji.name === '⏪' && currentPage > 0)        currentPage--;
-      if (reaction.emoji.name === '⏩' && currentPage < totalPages-1) currentPage++;
+      if (reaction.emoji.name === '⏪' && currentPage > 0) currentPage--;
+      if (reaction.emoji.name === '⏩' && currentPage < totalPages - 1) currentPage++;
       sent.edit({ embeds: [createEmbed(currentPage)] });
       reaction.users.remove(message.author);
     });
