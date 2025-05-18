@@ -1,15 +1,16 @@
 const { EmbedBuilder } = require('discord.js');
+const { nanoid } = require('nanoid'); // Use the direct import
 
 // Helper function for card rarity
 function getRarity(user) {
     const rarityTable = {
-        'Secret': 0.0005,    // 0.05%
-        'Mythic': 0.0045,     // 0.45%
-        'Legendary': 0.02,   // 2%
-        'Epic': 0.075,      // 7.5%
-        'Rare': 0.1,        // 10%
-        'Uncommon': 0.2,    // 20%
-        'Common': 0.6      // 60%
+        'Secret': 0.0005,      // 0.05%
+        'Mythic': 0.0045,       // 0.45%
+        'Legendary': 0.02,      // 2%
+        'Epic': 0.075,        // 7.5%
+        'Rare': 0.1,          // 10%
+        'Uncommon': 0.2,      // 20%
+        'Common': 0.6          // 60%
     };
 
     if (user?.luckBoost?.multiplier) {
@@ -20,32 +21,28 @@ function getRarity(user) {
             rarityTable['Epic'] = 0.015;
             rarityTable['Rare'] = 0.03;
             rarityTable['Common'] = 0.9500;
-        }
-        else if (user.luckBoost.multiplier === 10) {
+        } else if (user.luckBoost.multiplier === 10) {
             rarityTable['Secret'] = 0.0002;
             rarityTable['Mythic'] = 0.0018;
             rarityTable['Legendary'] = 0.008;
             rarityTable['Epic'] = 0.04;
             rarityTable['Rare'] = 0.10;
             rarityTable['Common'] = 0.8500;
-        }
-        else if (user.luckBoost.multiplier === 5) {
+        } else if (user.luckBoost.multiplier === 5) {
             rarityTable['Secret'] = 0.001;
             rarityTable['Mythic'] = 0.007;
             rarityTable['Legendary'] = 0.032;
             rarityTable['Epic'] = 0.11;
             rarityTable['Rare'] = 0.15;
             rarityTable['Common'] = 0.6920;
-        }
-        else if (user.luckBoost.multiplier === 4) {
+        } else if (user.luckBoost.multiplier === 4) {
             rarityTable['Secret'] = 0.0003;
             rarityTable['Mythic'] = 0.0027;
             rarityTable['Legendary'] = 0.012;
             rarityTable['Epic'] = 0.06;
             rarityTable['Rare'] = 0.075;
             rarityTable['Uncommon'] = 0.8500;
-        }
-        else if (user.luckBoost.multiplier === 2) {
+        } else if (user.luckBoost.multiplier === 2) {
             rarityTable['Secret'] = 0.0005;
             rarityTable['Mythic'] = 0.0045;
             rarityTable['Legendary'] = 0.02;
@@ -101,7 +98,7 @@ module.exports = {
     async execute(message, args, { cards, db }) {
         try {
             // Dynamically import nanoid
-            const { nanoid } = await import('nanoid');
+            // const { nanoid } = await import('nanoid'); // Removed dynamic import
 
             try {
                 await db.read();
@@ -222,13 +219,15 @@ module.exports = {
                     }
 
                     // store only cardId + instance, value/title etc looked up later
-                    claimer.inventory.push({
+                    const cardInstance = {
                         cardId: selected.id,
                         instanceId: nanoid(),
                         shiny: isShiny,
-                        condition,
+                        condition: condition,
                         acquired: Date.now(),
-                    });
+                    };
+                    claimer.inventory.push(cardInstance);
+
                     try {
                         await db.write();
                         console.log(`Card claimed by: ${claimerId}`);
