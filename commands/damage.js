@@ -1,141 +1,81 @@
 const { EmbedBuilder } = require('discord.js');
 
-const COOLDOWN_TIME = 600000; // 10 minutes in milliseconds
-const DAMAGE_AMOUNT = 1; // Amount of damage each card takes
-const FAILURE_RATE = 0.3; // 30% chance of failure (default)
-
 module.exports = {
-    name: 'damage',
-    description: 'Damage another user\'s top 5 most expensive non-protected cards, with a chance of failure.',
-    async execute(message, args, { cards, db }) {
-        const damagerId = message.author.id;
-        const targetId = message.mentions.users.first()?.id;
+  name: 'damage',
+  description: 'Damages a random card in a user\'s inventory.  Ignores protected cards and reduces price by 90%.',
+  async execute(message, args, { db, cards }) {
+    if (message.author.id === message.guild.ownerId) return message.reply("I can't damage the owner's cards.");
 
-        if (!targetId) {
-            return message.reply("Please mention the user you want to damage.");
-        }
+    await db.read();
+    const targetUserId = args[0] ? args[0].replace(/<@!?(\d+)>/g, '$1') : message.author.id;
+    const targetUser = db.data.users[targetUserId];
 
-        if (damagerId === targetId) {
-            return message.reply("You can't damage yourself!");
-        }
+    if (!targetUser || !targetUser.inventory.length) {
+      return message.reply(args[0] ? "That user has no cards to damage." : "You have no cards to damage.");
+    }
 
-        await db.read();
+    // Filter out protected cards
+    const vulnerableCards = targetUser.inventory.filter(cardId => {
+      const cardParts = cardId.split('.');
+      const baseCardId = cardParts[0];
+      return !targetUser.protectedCards.includes(baseCardId);
+    });
 
-        // Initialize user data if they don't exist
-        if (!db.data.users[damagerId]) {
-            db.data.users[damagerId] = { balance: 0, cooldown: 0, inventory: [], balanceLockExpiry: null }; // Add balanceLockExpiry
-        }
-        if (!db.data.users[targetId]) {
-            db.data.users[targetId] = { balance: 0, cooldown: 0, inventory: [], balanceLockExpiry: null }; // Add balanceLockExpiry
-        }
+    if (vulnerableCards.length === 0) {
+      return message.reply(args[0] ? "That user has no *vulnerable* cards to damage." : "You have no *vulnerable* cards to damage.");
+    }
 
-        const damager = db.data.users[damagerId];
-        const target = db.data.users[targetId];
-        const now = Date.now();
+    const randomCardIndex = Math.floor(Math.random() * vulnerableCards.length);
+    const damagedCardId = vulnerableCards[randomCardIndex];
 
-        if (damager.cooldown > now) {
-            const timeLeft = (damager.cooldown - now) / 1000;
-            return message.reply(`You can damage again in ${timeLeft.toFixed(0)} seconds.`);
-        }
+    const cardParts = damagedCardId.split('.'); // [cardId, shiny, condition]
+    const baseCardId = cardParts[0];
+    const shiny = cardParts[1] === '1';
+    let condition = parseInt(cardParts[2]); // 2: avg, 3: poor, 4: great
 
-        // Check for target's balance lock
-        let forcedFailure = false;
-        if (target.balanceLockExpiry && target.balanceLockExpiry > now) {
-            forcedFailure = true; // Force failure if target has a lock
-            target.balanceLockExpiry = null; // Remove the balance lock
-        }
+    const cardData = cards.find(c => c.id === baseCardId);
+    if (!cardData) {
+      console.error(`Card with ID ${baseCardId} not found in card data.`);
+      return message.reply("Sorry, there was an error processing the damage.  The card data could not be found."); // Provide user feedback
+    }
 
-        if (target.cooldown > now) {
-            const timeLeft = (target.cooldown - now) / 1000;
-            return message.reply(`That user cannot be damaged for another ${timeLeft.toFixed(0)} seconds.`);
-        }
+    let originalConditionString = condition === 2 ? 'Average' : condition === 3 ? 'Poor' : 'Great';
 
-        if (!target.inventory || target.inventory.length === 0) {
-            return message.reply("That user has no cards to damage!");
-        }
+    if (condition === 4) { // Great
+      condition = 2; // Change to Average
+    } else if (condition === 2) { // Average
+      condition = 3; // Change to Poor
+    } else if (condition === 3) {
+      //stays poor.
+    }
 
-        // 1. Filter out protected cards
-        const vulnerableCards = target.inventory.filter(card => !card.protected);
+    cardParts[2] = condition.toString(); //update condition
+    const newCardId = cardParts.join('.');
 
-        if (vulnerableCards.length === 0) {
-            return message.reply("That user has no non-protected cards!");
-        }
+    // Remove old card, add new card with new condition
+    targetUser.inventory.splice(targetUser.inventory.indexOf(damagedCardId), 1);
+    targetUser.inventory.push(newCardId);
 
-        // 2. Sort cards by price
-        const getCardPrice = (cardId) => {
-            const cardDef = cards.find(c => c.id === cardId);
-            if (cardDef) {
-                return cardDef.price || 0;
-            }
-            return 0;
-        };
+    const newConditionString = condition === 2 ? 'Average' : condition === 3 ? 'Poor' : 'Great';
 
-        vulnerableCards.sort((a, b) => {
-            const priceA = getCardPrice(a.cardId);
-            const priceB = getCardPrice(b.cardId);
-            return priceB - priceA;
-        });
+    // Calculate price reduction
+    const priceReduction = 0.9; // 90% reduction
+    let originalPrice = cardData.price;
+    if (shiny) {
+      originalPrice *= 2; // Apply shiny multiplier
+    }
+    const newPrice = Math.max(100, Math.round(originalPrice * (1 - priceReduction))); // Ensure >= 100
 
-        // 3. Get the top 5 most expensive cards
-        const cardsToDamage = vulnerableCards.slice(0, 5);
-        let totalFine = 0; // Keep track of the total fine
-        const damagedCards = [];
+    await db.write();
+    const embed = new EmbedBuilder()
+      .setTitle('Card Damaged!')
+      .setDescription(
+        `${args[0] ? `<@${targetUserId}>'s` : 'Your'} card **${cardData.title}**` +
+        ` has been damaged!  It went from ${originalConditionString} to ${newConditionString} condition.` +
+        ` Its price has been reduced to ${newPrice}₩.` //show new price
+      )
+      .setColor(0xCC0000); // Red
 
-        // 4. Damage the cards (with failure chance)
-        for (const card of cardsToDamage) {
-            if (Math.random() > FAILURE_RATE || forcedFailure) { //  Damage calculation
-                if (!forcedFailure) {
-                  card.damage = (card.damage || 0) + DAMAGE_AMOUNT;
-                  damagedCards.push(card);
-                }
-                // Calculate fine even if no damage is applied
-                const cardPrice = getCardPrice(card.cardId);
-                totalFine += cardPrice;
-            } else {
-                const cardPrice = getCardPrice(card.cardId);
-                totalFine += cardPrice;
-            }
-        }
-
-        damager.balance -= totalFine; // Subtract the fine
-        if (damager.balance < 0) {
-            // Handle debt
-            message.reply(`You failed to damage and owe ${totalFine}₩! Your balance is now ${damager.balance}.`);
-        } else {
-            message.reply(`You failed to damage and owe ${totalFine}₩! Your balance is now ${damager.balance}.`);
-        }
-
-        target.cooldown = now + COOLDOWN_TIME;
-        damager.cooldown = now + COOLDOWN_TIME;
-        await db.write();
-
-        // 5. Create and send embed
-        const embed = new EmbedBuilder()
-            .setTitle('Card Damage Report')
-            .setDescription(
-                (totalFine > 0 ? `Failed to damage cards. Fined ${message.author.username} ${totalFine}!\n` : '') +
-                `Damaged ${message.mentions.users.first().username}'s cards!`
-            )
-            .setColor(0xFF8C00);
-
-        if (damagedCards.length > 0) {
-            damagedCards.forEach(card => {
-                const cardDef = cards.find(c => c.id === card.cardId);
-                const cardName = cardDef ? cardDef.name : 'Unknown Card';
-                embed.addFields({
-                    name: cardName,
-                    value: `New Damage: ${card.damage}`,
-                    inline: false,
-                });
-            });
-        } else {
-            embed.addFields({
-                name: 'No Cards Damaged',
-                value: 'No cards were damaged this time.',
-                inline: false
-            });
-        }
-
-        return message.reply({ embeds: [embed] });
-    },
+    message.channel.send({ embeds: [embed] });
+  },
 };
