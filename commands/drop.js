@@ -2,175 +2,93 @@ const { EmbedBuilder } = require('discord.js');
 
 // Helper function for card rarity
 function getRarity(user) {
-    const n = Math.random() * 100;
-    let rarity;
-    let percentage;
-    let fraction; // Added fraction
+    const rarityTable = {
+        'Secret': 0.0005,    // 0.05%
+        'Mythic': 0.0045,     // 0.45%
+        'Legendary': 0.02,   // 2%
+        'Epic': 0.075,      // 7.5%
+        'Rare': 0.1,        // 10%
+        'Uncommon': 0.2,    // 20%
+        'Common': 0.6      // 60%
+    };
 
-    if (user?.luckBoost?.multiplier === 25) { // 25x boost
-        if (n < 0.01) {
-            rarity = 'Secret';
-            percentage = '0.01%';
-            fraction = '1/10000';
-        } else if (n < 0.1) {
-            rarity = 'Mythic';
-            percentage = '0.09%';
-            fraction = '1/1000';
-        } else if (n < 0.5) {
-            rarity = 'Legendary';
-            percentage = '0.4%';
-            fraction = '1/200';
-        } else if (n < 2) {
-            rarity = 'Epic';
-            percentage = '1.5%';
-            fraction = '3/200';
-        } else if (n < 5) {
-            rarity = 'Rare';
-            percentage = '3%';
-            fraction = '3/100';
-        } else {
-            rarity = 'Common';
-            percentage = '>95%';
-            fraction = '>19/20';
+    if (user?.luckBoost?.multiplier) {
+        if (user.luckBoost.multiplier === 25) {
+            rarityTable['Secret'] = 0.0001;
+            rarityTable['Mythic'] = 0.0009;
+            rarityTable['Legendary'] = 0.004;
+            rarityTable['Epic'] = 0.015;
+            rarityTable['Rare'] = 0.03;
+            rarityTable['Common'] = 0.9500;
         }
-    } else if (user?.luckBoost?.multiplier === 10) { // 10x boost
-        if (n < 0.02) {
-            rarity = 'Secret';
-            percentage = '0.02%';
-            fraction = '1/5000';
-        } else if (n < 0.2) {
-            rarity = 'Mythic';
-            percentage = '0.18%';
-            fraction = '1/555';
-        } else if (n < 1) {
-            rarity = 'Legendary';
-            percentage = '0.8%';
-            fraction = '1/125';
-        } else if (n < 5) {
-            rarity = 'Epic';
-            percentage = '4%';
-            fraction = '1/25';
-        } else if (n < 15) {
-            rarity = 'Rare';
-            percentage = '10%';
-            fraction = '1/10';
-        } else {
-            rarity = 'Common';
-            percentage = '>85%';
-            fraction = '>6/7';
+        else if (user.luckBoost.multiplier === 10) {
+            rarityTable['Secret'] = 0.0002;
+            rarityTable['Mythic'] = 0.0018;
+            rarityTable['Legendary'] = 0.008;
+            rarityTable['Epic'] = 0.04;
+            rarityTable['Rare'] = 0.10;
+            rarityTable['Common'] = 0.8500;
         }
-    } else if (user?.luckBoost?.multiplier === 5) { // 5x boost
-        if (n < 0.1) {
-            rarity = 'Secret';
-            percentage = '0.1%';
-            fraction = '1/1000';
-        } else if (n < 0.8) {
-            rarity = 'Mythic';
-            percentage = '0.7%';
-            fraction = '7/1000';
-        } else if (n < 4) {
-            rarity = 'Legendary';
-            percentage = '3.2%';
-            fraction = '8/250';
-        } else if (n < 15) {
-            rarity = 'Epic';
-            percentage = '11%';
-            fraction = '11/100';
-        } else if (n < 30) {
-            rarity = 'Rare';
-            percentage = '15%';
-            fraction = '3/20';
-        } else {
-            rarity = 'Common';
-            percentage = '>70%';
-            fraction = '>7/10';
+        else if (user.luckBoost.multiplier === 5) {
+            rarityTable['Secret'] = 0.001;
+            rarityTable['Mythic'] = 0.007;
+            rarityTable['Legendary'] = 0.032;
+            rarityTable['Epic'] = 0.11;
+            rarityTable['Rare'] = 0.15;
+            rarityTable['Common'] = 0.6920;
         }
-    } else if (user?.luckBoost?.multiplier === 4) {
-        if (n < 0.03) {
-            rarity = 'Secret';
-            percentage = '0.03%';
-            fraction = '1/3333';
-        } else if (n < 0.3) {
-            rarity = 'Mythic';
-            percentage = '0.27%';
-            fraction = '27/10000';
-        } else if (n < 1.5) {
-            rarity = 'Legendary';
-            percentage = '1.2%';
-            fraction = '3/250';
-        } else if (n < 7.5) {
-            rarity = 'Epic';
-            percentage = '6%';
-            fraction = '6/100';
-        } else if (n < 15) {
-            rarity = 'Rare';
-            percentage = '7.5%';
-            fraction = '15/200';
-        } else {
-            rarity = 'Uncommon';
-            percentage = '>85%';
-            fraction = '>17/20';
+        else if (user.luckBoost.multiplier === 4) {
+            rarityTable['Secret'] = 0.0003;
+            rarityTable['Mythic'] = 0.0027;
+            rarityTable['Legendary'] = 0.012;
+            rarityTable['Epic'] = 0.06;
+            rarityTable['Rare'] = 0.075;
+            rarityTable['Uncommon'] = 0.8500;
         }
-    } else if (user?.luckBoost?.multiplier === 2) { // 2x boost
-        if (n < 0.05) {
-            rarity = 'Secret';
-            percentage = '0.05%';
-            fraction = '1/2000';
-        } else if (n < 0.5) {
-            rarity = 'Mythic';
-            percentage = '0.45%';
-            fraction = '9/2000';
-        } else if (n < 2.5) {
-            rarity = 'Legendary';
-            percentage = '2%';
-            fraction = '1/50';
-        } else if (n < 10) {
-            rarity = 'Epic';
-            percentage = '7.5%';
-            fraction = '3/40';
-        } else if (n < 20) {
-            rarity = 'Rare';
-            percentage = '10%';
-            fraction = '1/10';
-        } else {
-            rarity = 'Uncommon';
-            percentage = '>80%';
-            fraction = '>4/5';
-        }
-    } else { // No boost
-        if (n < 0.05) {
-            rarity = 'Secret';
-            percentage = '0.05%';
-            fraction = '1/2000';
-        } else if (n < 0.5) {
-            rarity = 'Mythic';
-            percentage = '0.45%';
-            fraction = '9/2000';
-        } else if (n < 2.5) {
-            rarity = 'Legendary';
-            percentage = '2%';
-            fraction = '1/50';
-        } else if (n < 10) {
-            rarity = 'Epic';
-            percentage = '7.5%';
-            fraction = '3/40';
-        } else if (n < 20) {
-            rarity = 'Rare';
-            percentage = '10%';
-            fraction = '1/10';
-        } else if (n < 40) {
-            rarity = 'Uncommon';
-            percentage = '20%';
-            fraction = '1/5';
-        } else {
-            rarity = 'Common';
-            percentage = '40%';
-            fraction = '2/5';
+        else if (user.luckBoost.multiplier === 2) {
+            rarityTable['Secret'] = 0.0005;
+            rarityTable['Mythic'] = 0.0045;
+            rarityTable['Legendary'] = 0.02;
+            rarityTable['Epic'] = 0.075;
+            rarityTable['Rare'] = 0.10;
+            rarityTable['Uncommon'] = 0.8000;
         }
     }
-    return { rarity, percentage, fraction }; // Return  fraction
+
+    const n = Math.random();
+    let rarity;
+    let percentage;
+    let fraction;
+
+    let cumulative = 0;
+    for (const r in rarityTable) {
+        cumulative += rarityTable[r];
+        if (n < cumulative) {
+            rarity = r;
+            percentage = (rarityTable[r] * 100).toFixed(2) + '%';
+            fraction = getFraction(rarityTable[r]);
+            break;
+        }
+    }
+    return { rarity, percentage, fraction };
 }
 
+function getFraction(decimal) {
+    const tolerance = 1e-5; // Adjust for precision
+    let numerator = 1;
+    let denominator = 1;
+    let error = Math.abs(decimal - numerator / denominator);
+
+    while (error > tolerance && denominator <= 10000) { // Limit denominator to prevent infinite loop
+        if (decimal > numerator / denominator) {
+            numerator++;
+        } else {
+            denominator++;
+        }
+        error = Math.abs(decimal - numerator / denominator);
+    }
+    return `${numerator}/${denominator}`;
+}
 // Helper function for card condition (same as before)
 function randomCondition() {
     const a = ['Poor', 'Average', 'Great'];
@@ -343,9 +261,9 @@ module.exports = {
             // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                 if(user.luckBoost?.dropsRemaining > 0){
+                if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
-                    if(user.luckBoost.dropsRemaining <= 0){
+                    if (user.luckBoost.dropsRemaining <= 0) {
                         user.luckBoost = null;
                     }
                 }
