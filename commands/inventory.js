@@ -14,31 +14,37 @@ module.exports = {
     const groups = {};
     let totalWorth = 0;
 
-    for (const card of user.inventory) {
-      const baseCard = cards.find(c => c.id === card.cardId);
+    for (const cardId of user.inventory) {
+      const cardParts = cardId.split('.'); // cardId.shiny.condition.protected
+      const baseCardId = cardParts[0];
+      const shiny = cardParts[1] === '1';
+      const conditionCode = cardParts[2]; // "2", "3", or "4"
+      const protectedStatus = cardParts[3] === '2'; // "0" or "2"
+
+      const baseCard = cards.find(c => c.id === baseCardId);
       if (!baseCard) continue;
 
+      let condition = 'Average';
+      if (conditionCode === '3') condition = 'Poor';
+      else if (conditionCode === '4') condition = 'Great';
+
       // compute final value after shiny & condition
-      const baseValue = card.shiny ? Math.ceil(baseCard.value * 1.4) : baseCard.value;
+      const baseValue = shiny ? Math.ceil(baseCard.value * 1.4) : baseCard.value;
       let conditionMultiplier = 1;
-      if (card.condition === 'Poor') conditionMultiplier = 0.85;
-      if (card.condition === 'Great') conditionMultiplier = 1.15;
+      if (condition === 'Poor') conditionMultiplier = 0.85;
+      if (condition === 'Great') conditionMultiplier = 1.15;
       const finalValue = Math.ceil(baseValue * conditionMultiplier);
 
-      const shinyCode = card.shiny ? '1' : '0';
-      const conditionCode = card.condition === 'Poor' ? '3'
-        : card.condition === 'Great' ? '4'
-          : '2';
-      const groupKey = `${card.cardId}.${shinyCode}.${conditionCode}`;
+      const groupKey = `${baseCardId}.${shiny ? '1' : '0'}.${conditionCode}.${protectedStatus ? '2' : '0'}`; // Include protected in key
 
       if (!groups[groupKey]) {
         groups[groupKey] = {
           cardInfo: {
             ...baseCard,
-            shiny: card.shiny,
-            condition: card.condition,
+            shiny: shiny,
+            condition: condition,
             value: finalValue,
-            protected: card.protected, // Include protected status
+            protected: protectedStatus, // Store protected status
           },
           count: 0
         };
@@ -69,16 +75,16 @@ module.exports = {
         .setColor(0x00AE86);
 
       const slice = cardGroups.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
-      for (const [groupKey, { cardInfo, count, protected }] of slice) { // Destructure protected
+      for (const [groupKey, { cardInfo, count }] of slice) { // Destructure cardInfo
         const groupWorth = cardInfo.value * count;
         const shinyLabel = cardInfo.shiny ? '✨ SHINY CARD ✨' : '';
         const conditionLbl = cardInfo.condition === 'Poor' ? '⚠️ Poor Condition'
           : cardInfo.condition === 'Great' ? '🌟 Great Condition'
             : '🔹 Average Condition';
-        const protectedLabel = protected ? '🔒 Protected' : ''; // New protected label
+        const protectedLabel = cardInfo.protected ? '🔒 Protected' : ''; // Get protected status
 
         embed.addFields({
-          name: `ID: **${groupKey}** — ${cardInfo.title} ${shinyLabel} ${conditionLbl} ${protectedLabel}`, // Added protectedLabel to name
+          name: `ID: **${groupKey}** — ${cardInfo.title} ${shinyLabel} ${conditionLbl} ${protectedLabel}`, // Added protectedLabel
           value: `Quantity: ${count}\n` +
             `Value per card: ${cardInfo.value}₩\n` +
             `Group worth: ${groupWorth}₩`,
