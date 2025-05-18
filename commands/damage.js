@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 
 const COOLDOWN_TIME = 600000; // 10 minutes in milliseconds
 const DAMAGE_AMOUNT = 1; // Amount of damage each card takes
-const FAILURE_RATE = 0.3; // 30% chance of failure
+const FAILURE_RATE = 0.3; // 30% chance of failure (default)
 
 module.exports = {
     name: 'damage',
@@ -23,10 +23,10 @@ module.exports = {
 
         // Initialize user data if they don't exist
         if (!db.data.users[damagerId]) {
-            db.data.users[damagerId] = { balance: 0, cooldown: 0, inventory: [] };
+            db.data.users[damagerId] = { balance: 0, cooldown: 0, inventory: [], balanceLockExpiry: null }; // Add balanceLockExpiry
         }
         if (!db.data.users[targetId]) {
-            db.data.users[targetId] = { balance: 0, cooldown: 0, inventory: [] };
+            db.data.users[targetId] = { balance: 0, cooldown: 0, inventory: [], balanceLockExpiry: null }; // Add balanceLockExpiry
         }
 
         const damager = db.data.users[damagerId];
@@ -36,6 +36,13 @@ module.exports = {
         if (damager.cooldown > now) {
             const timeLeft = (damager.cooldown - now) / 1000;
             return message.reply(`You can damage again in ${timeLeft.toFixed(0)} seconds.`);
+        }
+
+        // Check for target's balance lock
+        let forcedFailure = false;
+        if (target.balanceLockExpiry && target.balanceLockExpiry > now) {
+            forcedFailure = true; // Force failure if target has a lock
+            target.balanceLockExpiry = null; // Remove the balance lock
         }
 
         if (target.cooldown > now) {
@@ -72,28 +79,30 @@ module.exports = {
         // 3. Get the top 5 most expensive cards
         const cardsToDamage = vulnerableCards.slice(0, 5);
         let totalFine = 0; // Keep track of the total fine
+        const damagedCards = [];
 
         // 4. Damage the cards (with failure chance)
-        const damagedCards = []; // Array to store actually damaged cards for the embed
         for (const card of cardsToDamage) {
-            if (Math.random() > FAILURE_RATE) { // Success!
-                card.damage = (card.damage || 0) + DAMAGE_AMOUNT;
-                damagedCards.push(card); // Add to the list of damaged cards
+            if (Math.random() > FAILURE_RATE || forcedFailure) { //  Damage calculation
+                if (!forcedFailure) {
+                  card.damage = (card.damage || 0) + DAMAGE_AMOUNT;
+                  damagedCards.push(card);
+                }
+                // Calculate fine even if no damage is applied
+                const cardPrice = getCardPrice(card.cardId);
+                totalFine += cardPrice;
             } else {
-                // Failure!  Calculate and apply fine
                 const cardPrice = getCardPrice(card.cardId);
                 totalFine += cardPrice;
             }
         }
 
-        if (totalFine > 0) {
-            damager.balance -= totalFine; // Subtract the fine
-            if (damager.balance < 0) {
-                // Handle debt (optional: you might have a separate debt tracking)
-                message.reply(`You failed to damage and owe ${totalFine}! Your balance is now ${damager.balance}.`);
-            } else {
-                message.reply(`You failed to damage and owe ${totalFine}! Your balance is now ${damager.balance}.`);
-            }
+        damager.balance -= totalFine; // Subtract the fine
+        if (damager.balance < 0) {
+            // Handle debt
+            message.reply(`You failed to damage and owe ${totalFine}₩! Your balance is now ${damager.balance}.`);
+        } else {
+            message.reply(`You failed to damage and owe ${totalFine}₩! Your balance is now ${damager.balance}.`);
         }
 
         target.cooldown = now + COOLDOWN_TIME;
@@ -104,13 +113,13 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle('Card Damage Report')
             .setDescription(
-                (totalFine > 0 ? `Failed to damage some cards. Fined ${message.author.username} ${totalFine}!\n` : '') +
+                (totalFine > 0 ? `Failed to damage cards. Fined ${message.author.username} ${totalFine}!\n` : '') +
                 `Damaged ${message.mentions.users.first().username}'s cards!`
             )
-            .setColor(totalFine > 0 ? 0xFF8C00 : 0xFF0000); // Orange for failure, Red for success
+            .setColor(0xFF8C00);
 
         if (damagedCards.length > 0) {
-            damagedCards.forEach(card => { // Use the damagedCards array
+            damagedCards.forEach(card => {
                 const cardDef = cards.find(c => c.id === card.cardId);
                 const cardName = cardDef ? cardDef.name : 'Unknown Card';
                 embed.addFields({
@@ -119,7 +128,7 @@ module.exports = {
                     inline: false,
                 });
             });
-        } else if (totalFine === 0) {
+        } else {
             embed.addFields({
                 name: 'No Cards Damaged',
                 value: 'No cards were damaged this time.',
