@@ -167,6 +167,7 @@ function getHandValue(hand) {
     let hasAce = false;
 
     for (const card of hand) {
+        if (!card) continue; // Add this line to handle null cards
         let cardValue = parseInt(card.value);
         if (card.value === 'J' || card.value === 'Q' || card.value === 'K') {
             cardValue = 10;
@@ -194,7 +195,7 @@ function determineWinner(gameState) {
     const dealerTotal = gameState.dealerTotal;
     const bet = gameState.bet;
 
-    while (dealerTotal < 17) {
+    while (gameState.dealerTotal < 17) {
         gameState.dealerHand.push(drawCard(gameState.deck));
         gameState.dealerTotal = getHandValue(gameState.dealerHand);
     }
