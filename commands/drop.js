@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { nanoid } = require('nanoid'); // Use the direct import
+const { nanoid } = require('nanoid');
 
 // Helper function for card rarity
 function getRarity(user) {
@@ -9,7 +9,7 @@ function getRarity(user) {
         'Legendary': 0.02,      // 2%
         'Epic': 0.075,        // 7.5%
         'Rare': 0.1,          // 10%
-        'Uncommon': 0.2,      // 20%
+        'Uncommon': 0.2,        // 20%
         'Common': 0.6          // 60%
     };
 
@@ -97,21 +97,11 @@ module.exports = {
     aliases: ['d', 'dropcard', 'dc', 'cardrop', 'cdrop'],
     async execute(message, args, { cards, db }) {
         try {
-            // Dynamically import nanoid
-            // const { nanoid } = await import('nanoid'); // Removed dynamic import
-
-            try {
-                await db.read();
-            } catch (error) {
-                console.error("Error reading from database:", error, { userId: message.author.id });
-                message.reply("Error: Failed to read from the database.");
-                return;
-            }
+            await db.read();
 
             const dropperId = message.author.id;
             const now = Date.now();
-            const HOUR = 60 * 60 * 1000;
-            const BYPASS_USER_ID = '722463127782031400';
+            const BYPASS_USER_ID = '722463127782031400'; // Replace with your ID
 
             let user = db.data?.users?.[dropperId];
             if (!user) {
@@ -120,7 +110,7 @@ module.exports = {
                     cooldownEnd: 0,
                     inventory: [],
                     balance: 0,
-                    dropsAvailable: 0,
+                    dropsAvailable: 3, // give 3 drops as default
                     luckBoost: null
                 };
                 if (!db.data) db.data = { users: {} };
@@ -129,7 +119,7 @@ module.exports = {
             }
 
             // Reset or check cooldown
-            if (dropperId !== BYPASS_USER_ID) {
+             if (dropperId !== BYPASS_USER_ID) {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
@@ -146,7 +136,6 @@ module.exports = {
                     return message.reply('You have no more card drops available! Use the `buy` command to get more.');
                 }
             }
-
 
             // pick rarity→card
             const { rarity, percentage, fraction } = getRarity(user); // Get fraction
@@ -212,7 +201,7 @@ module.exports = {
                     await db.read();
                     let claimer = db.data?.users?.[claimerId];
                     if (!claimer) {
-                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0 };
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3 }; //give default drops to new user
                         if (!db.data) db.data = { users: {} };
                         db.data.users[claimerId] = claimer;
                         console.log(`Creating new user (claimer): ${claimerId}`);
@@ -260,7 +249,7 @@ module.exports = {
             // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                if (user.luckBoost?.dropsRemaining > 0) {
+                 if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
                     if (user.luckBoost.dropsRemaining <= 0) {
                         user.luckBoost = null;
