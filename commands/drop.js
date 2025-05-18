@@ -29,7 +29,7 @@ function getRarity(user) {
             chance = '1 in 33';
             percentage = '3%';
         } else {
-            rarity = 'Common'; // Changed from Rare to Common
+            rarity = 'Common';
             chance = '>1 in 20';
             percentage = '>95%';
         }
@@ -55,7 +55,7 @@ function getRarity(user) {
             chance = '1 in 10';
             percentage = '10%';
         } else {
-            rarity = 'Common';  // Changed from Rare to Common
+            rarity = 'Common';
             chance = '>1 in 7';
             percentage = '>85%';
         }
@@ -81,7 +81,7 @@ function getRarity(user) {
             chance = '1 in 5';
             percentage = '15%';
         } else {
-            rarity = 'Common';  // Changed from Rare to Common
+            rarity = 'Common';
             chance = '>1 in 3.3';
             percentage = '>70%';
         }
@@ -179,6 +179,7 @@ function randomCondition() {
 
 module.exports = {
     name: 'drop',
+    aliases: ['d', 'dropcard', 'dc', 'carddrop', 'cdrop'], // Add aliases here
     async execute(message, args, { cards, db }) {
         try {
             // Dynamically import nanoid
@@ -204,15 +205,15 @@ module.exports = {
                     cooldownEnd: 0,
                     inventory: [],
                     balance: 0,
-                    dropsAvailable: 0,  // Track available drops
-                    luckBoost: null      // Track luck boost
+                    dropsAvailable: 0,
+                    luckBoost: null
                 };
                 if (!db.data) db.data = { users: {} };
                 db.data.users[dropperId] = user;
                 console.log(`Creating new user: ${dropperId}`);
             }
 
-            // Reset or check cooldown (same as before, but using dropsAvailable)
+            // Reset or check cooldown
             if (dropperId !== BYPASS_USER_ID) {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
@@ -233,8 +234,7 @@ module.exports = {
 
 
             // pick rarity→card
-            const { rarity, chance, percentage } = getRarity(user); // Pass user object to getRarity
-            // **Crucial Check:** Make sure 'cards' is an array before filtering
+            const { rarity, chance, percentage } = getRarity(user);
             if (!Array.isArray(cards)) {
                 console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
                 return message.reply("Error: Card data is not loaded correctly.");
@@ -243,7 +243,6 @@ module.exports = {
             if (!pool.length) return message.reply(`No **${rarity}** cards.`);
             const selected = pool[Math.floor(Math.random() * pool.length)];
 
-            //Check if selected is valid
             if (!selected) {
                 console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity, { userId: message.author.id });
                 message.reply("Error: Could not select a card.");
@@ -257,7 +256,7 @@ module.exports = {
 
             // condition
             const condition = randomCondition();
-            const modifier = { Poor: -0.15, Great: 0.15, Average: 0 }[condition] || 0; //added default
+            const modifier = { Poor: -0.15, Great: 0.15, Average: 0 }[condition] || 0;
             const finalValue = Math.ceil(baseValue * (1 + modifier));
 
             // build embed
@@ -271,7 +270,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setTitle(`${sparkle}${selected.title} — ${condition}`)
                 .setDescription(desc)
-                .setImage(selected.image) // Use String, not object
+                .setImage(selected.image)
                 .setFooter({ text: `Value: ${finalValue}₩` });
 
             let dropMsg;
@@ -307,7 +306,7 @@ module.exports = {
                     // store only cardId + instance, value/title etc looked up later
                     claimer.inventory.push({
                         cardId: selected.id,
-                        instanceId: nanoid(), // Use nanoid here
+                        instanceId: nanoid(),
                         shiny: isShiny,
                         condition,
                         acquired: Date.now(),
@@ -355,7 +354,7 @@ module.exports = {
                 } catch (error) {
                     console.error("Error writing to database (decrement dropsAvailable):", error, { userId: dropperId });
                     message.reply("Error: Failed to update your drop count.");
-                    return; // Important: Exit the function if the write fails
+                    return;
                 }
             }
         } catch (error) {
