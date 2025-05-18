@@ -1,13 +1,14 @@
 const ROB_CHANCE = 0.3; // 30% chance of getting caught
 const ROB_MULTIPLIER = 0.1; // Steal 10% of the target's balance
 const FINE_MULTIPLIER = 1.2; // Pay 20% more than you tried to steal
+const COOLDOWN_TIME = 600000; // 10 minutes in milliseconds
 
 module.exports = {
-    name: 'rob', // Changed to name for message command
+    name: 'rob',
     description: 'Attempt to steal money from another user.',
-    async execute(message, args, { db }) { // Removed interaction, added message
+    async execute(message, args, { db }) {
         const robberId = message.author.id;
-        const targetId = message.mentions.users.first()?.id; // Get ID from mention
+        const targetId = message.mentions.users.first()?.id;
 
         if (!targetId) {
             return message.reply("Please mention the user you want to rob.");
@@ -19,16 +20,31 @@ module.exports = {
 
         await db.read();
 
-        // Initialize user balances if they don't exist
+        // Initialize user data if they don't exist
         if (!db.data.users[robberId]) {
-            db.data.users[robberId] = { balance: 0 };
+            db.data.users[robberId] = { balance: 0, cooldown: 0 };
         }
         if (!db.data.users[targetId]) {
-            db.data.users[targetId] = { balance: 0 };
+            db.data.users[targetId] = { balance: 0, cooldown: 0 };
         }
 
-        let robberBalance = db.data.users[robberId].balance;
-        let targetBalance = db.data.users[targetId].balance;
+        const robber = db.data.users[robberId];
+        const target = db.data.users[targetId];
+
+        const now = Date.now();
+
+        if (robber.cooldown > now) {
+            const timeLeft = (robber.cooldown - now) / 1000;
+            return message.reply(`You can rob again in ${timeLeft.toFixed(0)} seconds.`);
+        }
+
+        if (target.cooldown > now) {
+            const timeLeft = (target.cooldown - now) / 1000;
+            return message.reply(`That user cannot be robbed for another ${timeLeft.toFixed(0)} seconds.`);
+        }
+
+        let robberBalance = robber.balance;
+        let targetBalance = target.balance;
 
         if (targetBalance === 0) {
             return message.reply("That user has no money to steal!");
@@ -38,8 +54,9 @@ module.exports = {
         const fineAmount = Math.floor(stolenAmount * FINE_MULTIPLIER);
 
         if (Math.random() < ROB_CHANCE) { // Robber gets caught
-            db.data.users[robberId].balance -= fineAmount;
-            db.data.users[targetId].balance += fineAmount;
+            robber.balance -= fineAmount;
+            target.balance += fineAmount;
+            robber.cooldown = now + COOLDOWN_TIME;
             await db.write();
 
             if (robberBalance < fineAmount) {
@@ -48,8 +65,10 @@ module.exports = {
                 return message.reply(`You were caught and fined ${fineAmount}₩!`);
             }
         } else { // Robber succeeds
-            db.data.users[robberId].balance += stolenAmount;
-            db.data.users[targetId].balance -= stolenAmount;
+            robber.balance += stolenAmount;
+            target.balance -= stolenAmount;
+            robber.cooldown = now + COOLDOWN_TIME;
+            target.cooldown = now + COOLDOWN_TIME;
             await db.write();
             return message.reply(`You stole ${stolenAmount}₩ from <@${targetId}>!`);
         }
