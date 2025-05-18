@@ -23,38 +23,19 @@ module.exports = {
             }
 
             const now = Date.now();
-            const expiresAt = user.luckBoost.expiresAt;
 
-            if (now >= expiresAt) {
-                // Clear the expired boost
-                user.luckBoost = null;
-                await db.write();
-                return message.reply('Your boost has expired.');
-            }
-
-            const remaining = expiresAt - now;
-            const hours = Math.floor(remaining / (1000 * 60 * 60));
-            const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
             // Calculate drops remaining.  The !buy command sets the boost to expire after 100 drops.
-            let dropsRemaining = Math.ceil(remaining / (60 * 60 * 1000)); // Assuming 1 drop per hour, convert ms to hours
-
-            // added this check
-            if(user.luckBoost.dropsRemaining !== undefined){
-                dropsRemaining = user.luckBoost.dropsRemaining;
-            }
-
+            let dropsRemaining =  user.luckBoost.dropsRemaining;
 
             const embed = new EmbedBuilder()
                 .setTitle('Active Boost')
                 .setDescription(`You have an active **${user.luckBoost.multiplier}x** boost.`)
                 .addFields(
-                    { name: 'Expires In', value: `${hours}h ${minutes}m ${seconds}s` },
                     { name: 'Drops Remaining', value: `${dropsRemaining}` }
                 )
                 .setColor(0xF1C40F); // Gold color
-            
+
             // Save dropsRemaining to the database
             user.luckBoost.dropsRemaining = dropsRemaining;
             await db.write();
