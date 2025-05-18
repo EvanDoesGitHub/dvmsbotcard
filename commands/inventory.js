@@ -32,8 +32,9 @@ module.exports = {
                 // compute final value after shiny & condition
                 const baseValue = shiny ? Math.ceil(baseCard.value * 1.4) : baseCard.value;
                 let conditionMultiplier = 1;
-                if (condition === 'Poor') conditionMultiplier = 0.85;
-                else if (condition === 'Great') conditionMultiplier = 1.15;
+                if (condition === 1) conditionMultiplier = 0.85; // Poor
+                else if (condition === 3) conditionMultiplier = 1.15; // Great
+                //  Average (2) doesn't need an else if, it defaults to 1
                 const finalValue = Math.ceil(baseValue * conditionMultiplier);
 
                 const groupKey = `${cardId}.${shiny ? '1' : '0'}.${condition}.${protectedStatus ? '1' : '0'}`; // Include protected
@@ -80,9 +81,9 @@ module.exports = {
                     const groupWorth = cardInfo.value * count;
                     const shinyLabel = cardInfo.shiny ? '✨ SHINY CARD ✨' : '';
                     const conditionLbl =
-                        cardInfo.condition === 'Poor' ? '⚠️ Poor Condition'
-                            : cardInfo.condition === 'Great' ? '🌟 Great Condition'
-                                : '🔹 Average Condition';
+                        cardInfo.condition === 1 ? '⚠️ Poor Condition'
+                        : cardInfo.condition === 3 ? '🌟 Great Condition'
+                        : '🔹 Average Condition'; // 2 is average
                     const protectedLabel = cardInfo.protected ? '🔒 Protected' : ''; // Get protected status
 
                     embed.addFields({
