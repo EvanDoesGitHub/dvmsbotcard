@@ -89,6 +89,7 @@ module.exports = {
                         conditionLabelText = '🌟 Great Condition';
                     }
                     const protectedLabel = cardInfo.protected ? '🔒 Protected' : ''; // Get protected status
+                    const [cardId] = groupKey.split('.'); // Extract cardId
 
                     embed.addFields({
                         name: `ID: **${cardId}.${shiny ? '1' : '0'}.${cardInfo.condition}** — ${cardInfo.title} ${shinyLabel} ${conditionLabelText} ${protectedLabel}`, // Added protectedLabel
