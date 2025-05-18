@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
 const path = require('path');
-//const { nanoid } = require('nanoid'); // REMOVE THIS LINE
+//const { nanoid } = require('nanoid');
 const { sweepExpiredAuctions } = require('./utils/auctionUtils');
 require('dotenv').config();
 
@@ -43,7 +43,7 @@ async function initializeDatabase() {
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
     for (const file of commandFiles) {
         const cmd = require(`./commands/${file}`);
-        client.commands.set(cmd.name, cmd);
+        client.commands.set(cmd.name, cmd); // Use cmd.name
     }
 
     client.once('ready', () => {
@@ -52,18 +52,20 @@ async function initializeDatabase() {
         setInterval(() => sweepExpiredAuctions(client, client.db), 60_000); // Pass client.db
     });
 
-    client.on('messageCreate', async message => {
+    client.on('messageCreate', async message => { // messageCreate event
         if (!message.content.startsWith('!') || message.author.bot) return;
         const args = message.content.slice(1).trim().split(/ +/);
-        const command = args.shift().toLowerCase();
-        if (!client.commands.has(command)) return;
+        const commandName = args.shift().toLowerCase(); // Get command name
+        const command = client.commands.get(commandName);
+
+        if (!command) return;
+
         try {
             const { nanoid } = await import('nanoid');
-            // Pass client.db to the execute function
-            await client.commands.get(command).execute(message, args, { cards, db: client.db, EmbedBuilder, nanoid });
+            await command.execute(message, args, { cards, db: client.db, EmbedBuilder, nanoid }); // Pass message and args
         } catch (err) {
             console.error(err);
-            message.reply('There was an error executing that command.');
+            message.reply('There was an error executing that command.'); // Use message.reply
         }
     });
 
