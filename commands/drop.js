@@ -1,58 +1,136 @@
 const { EmbedBuilder } = require('discord.js');
 
-// Helper function for card rarity (same as before)
+// Helper function for card rarity
 function getRarity(user) {
     const n = Math.random() * 100;
     let rarity;
+    let chance;
 
     if (user?.luckBoost?.multiplier === 25) { // 25x boost
-        if (n < 0.01) rarity = 'Secret';
-        else if (n < 0.1) rarity = 'Mythic';
-        else if (n < 0.5) rarity = 'Legendary';
-        else if (n < 2) rarity = 'Epic';
-        else if (n < 5) rarity = 'Rare';
-        else rarity = 'Rare';
-    }
-    else if (user?.luckBoost?.multiplier === 10) { // 10x boost: significantly increased chances
-        if (n < 0.02) rarity = 'Secret';  // Buffed Secret
-        else if (n < 0.2) rarity = 'Mythic';    // Buffed Mythic
-        else if (n < 1) rarity = 'Legendary';    // Buffed Legendary
-        else if (n < 5) rarity = 'Epic';        // Buffed Epic
-        else if (n < 15) rarity = 'Rare';      // Buffed Rare
-        else rarity = 'Rare';
-    }
-    else if (user?.luckBoost?.multiplier === 5) { // 5x boost: increased chances, no commons/uncommons
-        if (n < 0.1) rarity = 'Secret';          //was 0.05
-        else if (n < 0.8) rarity = 'Mythic';      //was 0.5
-        else if (n < 4) rarity = 'Legendary';      //was 2.5
-        else if (n < 15) rarity = 'Epic';        //was 10
-        else if (n < 30) rarity = 'Rare';         //was 20
-        else rarity = 'Rare';
+        if (n < 0.01) {
+            rarity = 'Secret';
+            chance = '0.01%';
+        } else if (n < 0.1) {
+            rarity = 'Mythic';
+            chance = '0.09%'; // Cumulative: 0.1%
+        } else if (n < 0.5) {
+            rarity = 'Legendary';
+            chance = '0.4%'; // Cumulative: 0.5%
+        } else if (n < 2) {
+            rarity = 'Epic';
+            chance = '1.5%';   // Cumulative 2%
+        } else if (n < 5) {
+            rarity = 'Rare';
+            chance = '3%';    // Cumulative 5%
+        } else {
+            rarity = 'Rare';
+            chance = '>95%';
+        }
+    } else if (user?.luckBoost?.multiplier === 10) { // 10x boost
+        if (n < 0.02) {
+            rarity = 'Secret';
+            chance = '0.02%';
+        } else if (n < 0.2) {
+            rarity = 'Mythic';
+            chance = '0.18%';
+        } else if (n < 1) {
+            rarity = 'Legendary';
+            chance = '0.8%';
+        } else if (n < 5) {
+            rarity = 'Epic';
+            chance = '4%';
+        } else if (n < 15) {
+            rarity = 'Rare';
+            chance = '10%';
+        } else {
+            rarity = '>85%';
+            chance = '>85%';
+        }
+    } else if (user?.luckBoost?.multiplier === 5) { // 5x boost
+        if (n < 0.1) {
+            rarity = 'Secret';
+            chance = '0.1%';
+        } else if (n < 0.8) {
+            rarity = 'Mythic';
+            chance = '0.7%';
+        } else if (n < 4) {
+            rarity = 'Legendary';
+            chance = '3.2%';
+        } else if (n < 15) {
+            rarity = 'Epic';
+            chance = '11%';
+        } else if (n < 30) {
+            rarity = 'Rare';
+            chance = '15%';
+        } else {
+            rarity = '>70%';
+            chance = '>70%';
+        }
     } else if (user?.luckBoost?.multiplier === 4) {
-        if (n < 0.03) rarity = 'Secret';
-        else if (n < 0.3) rarity = 'Mythic';
-        else if (n < 1.5) rarity = 'Legendary';
-        else if (n < 7.5) rarity = 'Epic';
-        else if (n < 15) rarity = 'Rare';
-        else rarity = 'Uncommon';
+        if (n < 0.03) {
+            rarity = 'Secret';
+            chance = '0.03%';
+        } else if (n < 0.3) {
+            rarity = 'Mythic';
+            chance = '0.27%';
+        } else if (n < 1.5) {
+            rarity = 'Legendary';
+            chance = '1.2%';
+        } else if (n < 7.5) {
+            rarity = 'Epic';
+            chance = '6%';
+        } else if (n < 15) {
+            rarity = 'Rare';
+            chance = '7.5%';
+        } else {
+            rarity = '>85%';
+            chance = '>85%';
+        }
+    } else if (user?.luckBoost?.multiplier === 2) { // 2x boost
+        if (n < 0.05) {
+            rarity = 'Secret';
+            chance = '0.05%';
+        } else if (n < 0.5) {
+            rarity = 'Mythic';
+            chance = '0.45%';
+        } else if (n < 2.5) {
+            rarity = 'Legendary';
+            chance = '2%';
+        } else if (n < 10) {
+            rarity = 'Epic';
+            chance = '7.5%';
+        } else if (n < 20) {
+            rarity = 'Rare';
+            chance = '10%';
+        } else {
+            rarity = '>80%';
+            chance = '>80%';
+        }
+    } else { // No boost
+        if (n < 0.05) {
+            rarity = 'Secret';
+            chance = '0.05%';
+        } else if (n < 0.5) {
+            rarity = 'Mythic';
+            chance = '0.45%';
+        } else if (n < 2.5) {
+            rarity = 'Legendary';
+            chance = '2%';
+        } else if (n < 10) {
+            rarity = 'Epic';
+            chance = '7.5%';
+        } else if (n < 20) {
+            rarity = 'Rare';
+            chance = '10%';
+        } else if (n < 40) {
+            rarity = 'Uncommon';
+            chance = '20%';
+        } else {
+            rarity = 'Common';
+            chance = '40%';
+        }
     }
-    else if (user?.luckBoost?.multiplier === 2) { // 2x boost: no commons
-        if (n < 0.05) rarity = 'Secret';
-        else if (n < 0.5) rarity = 'Mythic';
-        else if (n < 2.5) rarity = 'Legendary';
-        else if (n < 10) rarity = 'Epic';
-        else if (n < 20) rarity = 'Rare';
-        else rarity = 'Uncommon';
-    } else {
-        if (n < 0.05) rarity = 'Secret';
-        else if (n < 0.5) rarity = 'Mythic';
-        else if (n < 2.5) rarity = 'Legendary';
-        else if (n < 10) rarity = 'Epic';
-        else if (n < 20) rarity = 'Rare';
-        else if (n < 40) rarity = 'Uncommon';
-        else rarity = 'Common';
-    }
-    return { rarity };
+    return { rarity, chance };
 }
 
 // Helper function for card condition (same as before)
@@ -97,7 +175,7 @@ module.exports = {
             }
 
             // Reset or check cooldown (same as before, but using dropsAvailable)
-             if (dropperId !== BYPASS_USER_ID) {
+            if (dropperId !== BYPASS_USER_ID) {
                 if (user.cooldownEnd && now >= user.cooldownEnd) {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
@@ -117,7 +195,7 @@ module.exports = {
 
 
             // pick rarity→card
-            const { rarity } = getRarity(user); // Pass user object to getRarity
+            const { rarity, chance } = getRarity(user); // Pass user object to getRarity
             // **Crucial Check:** Make sure 'cards' is an array before filtering
             if (!Array.isArray(cards)) {
                 console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
@@ -127,8 +205,8 @@ module.exports = {
             if (!pool.length) return message.reply(`No **${rarity}** cards.`);
             const selected = pool[Math.floor(Math.random() * pool.length)];
 
-             //Check if selected is valid
-             if (!selected) {
+            //Check if selected is valid
+            if (!selected) {
                 console.error("Error: No card selected from pool. Pool:", pool, "Rarity:", rarity, { userId: message.author.id });
                 message.reply("Error: Could not select a card.");
                 return;
@@ -145,7 +223,7 @@ module.exports = {
             const finalValue = Math.ceil(baseValue * (1 + modifier));
 
             // build embed
-            let desc = `A **${selected.rarity}** card dropped! React ✅ to claim.`;
+            let desc = `A **${selected.rarity}** card dropped! (${chance} chance) React ✅ to claim.`;
             let remaining = dropperId === BYPASS_USER_ID ? 'unlimited' : user.dropsAvailable - 1;
             desc += `\nYou have **${remaining}** drops left.`;
             if (remaining !== 'unlimited' && remaining <= 2)
@@ -225,10 +303,10 @@ module.exports = {
                     console.error("Error in end event", error, { messageId: dropMsg.id });
                 }
             });
-             // Deduct a drop after successful drop
+            // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                if(user.luckBoost?.dropsRemaining > 0){
+                 if(user.luckBoost?.dropsRemaining > 0){
                     user.luckBoost.dropsRemaining -= 1;
                     if(user.luckBoost.dropsRemaining <= 0){
                         user.luckBoost = null;
