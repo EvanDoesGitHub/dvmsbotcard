@@ -95,7 +95,7 @@ function randomCondition() {
 module.exports = {
     name: 'drop',
     aliases: ['d', 'dropcard', 'dc', 'cardrop', 'cdrop'],
-    async execute(message, args, { cards, db }) {
+    async execute(message, args, { cards, db, nanoid }) { // nanoid passed from index.js
         try {
             await db.read(); // Read the latest database state
 
@@ -106,6 +106,7 @@ module.exports = {
 
             let user = db.data?.users?.[dropperId];
 
+            // **CRITICAL CHANGE HERE**
             // Robust initialization for the user object and its 'drops' property
             if (!user) {
                 user = {
@@ -119,12 +120,12 @@ module.exports = {
                     drops: 0 // Initialize 'drops' for a brand new user
                 };
                 if (!db.data) db.data = { users: {} }; // Ensure the parent 'users' object exists
-                db.data.users[dropperId] = user; // Assign the new user object to the database
+                db.data.users[dropperId] = user; // Assign the newly created user object to the database
                 console.log(`Creating new user: ${dropperId}`);
             } else {
                 // For existing users: Ensure 'drops' property is present and is a number
                 if (typeof user.drops !== 'number') {
-                    user.drops = 0; // Initialize if missing or not a number
+                    user.drops = 0; // Initialize if missing or not a number (e.g., loaded from old db.json)
                 }
             }
 
@@ -148,9 +149,9 @@ module.exports = {
                 }
 
                 if (user.dropsAvailable <= 0) {
-                    if (!user.cooldownMessageSent) { // Check if the message has been sent
+                    if (!user.cooldownMessageSent) {
                         user.cooldownEnd = now + COOLDOWN_DURATION;
-                        user.cooldownMessageSent = true; // Set the flag
+                        user.cooldownMessageSent = true;
                         try {
                             await db.write();
                         } catch (e) {
@@ -162,7 +163,6 @@ module.exports = {
                         });
                         return message.reply(`You've used all your drops. Resets in **60 minutes** at ${resetTime}. You can also buy more in the shop!`);
                     } else {
-                        // If cooldown message was already sent, just inform about the remaining time.
                         const timeDiff = user.cooldownEnd - now;
                         const minutes = Math.ceil(timeDiff / (60 * 1000));
                         const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
@@ -235,13 +235,13 @@ module.exports = {
             collector.on('collect', async (reaction, reactor) => {
                 try {
                     const claimerId = reactor.id;
-                    await db.read(); // Re-read to get the latest state before modifying
+                    await db.read(); // Re-read to get the latest state before modifying (important for multiple users)
                     let claimer = db.data?.users?.[claimerId];
 
                     if (!claimer) {
-                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 }; // Initialize drops for new claimers
-                        if (!db.data) db.data = { users: {} }; // Ensure the parent 'users' object exists
-                        db.data.users[claimerId] = claimer; // Assign the newly created user object
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 };
+                        if (!db.data) db.data = { users: {} };
+                        db.data.users[claimerId] = claimer;
                         console.log(`Creating new user (claimer): ${claimerId}`);
                     } else {
                          // For existing claimers: Ensure 'drops' property is present and is a number
@@ -253,11 +253,9 @@ module.exports = {
                     // store only cardId + instance, value/title etc looked up later
                     let cardInstance;
                     try {
-                        // nanoid is passed via context from index.js, no need to import here
-                        // const { nanoid } = await import('nanoid'); // This line is not needed if nanoid is passed
                         cardInstance = {
                             cardId: selected.id,
-                            instanceId: message.client.nanoid(), // Access nanoid from client context
+                            instanceId: nanoid(), // Use nanoid passed from index.js
                             shiny: isShiny,
                             condition: condition,
                             acquired: Date.now(),
