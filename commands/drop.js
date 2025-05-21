@@ -85,7 +85,8 @@ function getFraction(decimal) {
     }
     return `${numerator}/${denominator}`;
 }
-// Helper function for card condition (same as before)
+
+// Helper function for card condition
 function randomCondition() {
     const a = ['Poor', 'Average', 'Great'];
     return a[Math.floor(Math.random() * a.length)];
@@ -96,7 +97,7 @@ module.exports = {
     aliases: ['d', 'dropcard', 'dc', 'cardrop', 'cdrop'],
     async execute(message, args, { cards, db }) {
         try {
-            await db.read();
+            await db.read(); // Read the latest database state
 
             const dropperId = message.author.id;
             const now = Date.now();
@@ -105,29 +106,27 @@ module.exports = {
 
             let user = db.data?.users?.[dropperId];
 
-            // Initialize user object with all necessary properties if it doesn't exist
-            // This also handles existing users who might not have the 'drops' property yet
+            // Robust initialization for the user object and its 'drops' property
             if (!user) {
                 user = {
                     lastDrops: [],
                     cooldownEnd: 0,
                     inventory: [],
                     balance: 0,
-                    dropsAvailable: 10, // give 10 drops as default
+                    dropsAvailable: 10,
                     luckBoost: null,
                     cooldownMessageSent: false,
-                    drops: 0 // Ensure 'drops' is initialized for new users
+                    drops: 0 // Initialize 'drops' for a brand new user
                 };
-                if (!db.data) db.data = { users: {} };
-                db.data.users[dropperId] = user;
+                if (!db.data) db.data = { users: {} }; // Ensure the parent 'users' object exists
+                db.data.users[dropperId] = user; // Assign the new user object to the database
                 console.log(`Creating new user: ${dropperId}`);
             } else {
-                // Ensure 'drops' property exists for existing users
-                if (user.drops === undefined) {
-                    user.drops = 0;
+                // For existing users: Ensure 'drops' property is present and is a number
+                if (typeof user.drops !== 'number') {
+                    user.drops = 0; // Initialize if missing or not a number
                 }
             }
-
 
             // Reset or check cooldown
             if (dropperId !== BYPASS_USER_ID) {
@@ -155,7 +154,7 @@ module.exports = {
                         try {
                             await db.write();
                         } catch (e) {
-                            console.error("Error writing to db", e);
+                            console.error("Error writing to db (cooldown setup):", e);
                         }
                         const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
                             timeZone: 'America/Toronto',
@@ -176,7 +175,7 @@ module.exports = {
             }
 
             // pick rarity→card
-            const { rarity, percentage, fraction } = getRarity(user); // Get fraction
+            const { rarity, percentage, fraction } = getRarity(user);
             if (!Array.isArray(cards)) {
                 console.error("Error: 'cards' is not an array:", cards, { userId: message.author.id });
                 return message.reply("Error: Card data is not loaded correctly.");
@@ -202,7 +201,7 @@ module.exports = {
             const finalValue = Math.ceil(baseValue * (1 + modifier));
 
             // build embed
-            let desc = `A **${selected.rarity}** card dropped! (${percentage}, or ${fraction}) React ✅ to claim.`; // fraction to description
+            let desc = `A **${selected.rarity}** card dropped! (${percentage}, or ${fraction}) React ✅ to claim.`;
             let remaining = dropperId === BYPASS_USER_ID ? 'unlimited' : user.dropsAvailable - 1;
             desc += `\nYou have **${remaining}** drops left.`;
             if (remaining !== 'unlimited' && remaining <= 2)
@@ -241,12 +240,12 @@ module.exports = {
 
                     if (!claimer) {
                         claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 }; // Initialize drops for new claimers
-                        if (!db.data) db.data = { users: {} };
-                        db.data.users[claimerId] = claimer;
+                        if (!db.data) db.data = { users: {} }; // Ensure the parent 'users' object exists
+                        db.data.users[claimerId] = claimer; // Assign the newly created user object
                         console.log(`Creating new user (claimer): ${claimerId}`);
                     } else {
-                        // Ensure 'drops' property exists for existing claimers
-                        if (claimer.drops === undefined) {
+                         // For existing claimers: Ensure 'drops' property is present and is a number
+                        if (typeof claimer.drops !== 'number') {
                             claimer.drops = 0;
                         }
                     }
@@ -254,19 +253,19 @@ module.exports = {
                     // store only cardId + instance, value/title etc looked up later
                     let cardInstance;
                     try {
-                        const { nanoid } = await import('nanoid');
+                        // nanoid is passed via context from index.js, no need to import here
+                        // const { nanoid } = await import('nanoid'); // This line is not needed if nanoid is passed
                         cardInstance = {
                             cardId: selected.id,
-                            instanceId: nanoid(),
+                            instanceId: message.client.nanoid(), // Access nanoid from client context
                             shiny: isShiny,
                             condition: condition,
                             acquired: Date.now(),
                         };
                     } catch (e) {
-                        console.error("Failed to import nanoid", e);
+                        console.error("Failed to generate unique card ID (nanoid issue):", e);
                         return message.reply("Error: Failed to generate unique card ID.");
                     }
-
 
                     claimer.inventory.push(cardInstance);
 
@@ -274,7 +273,7 @@ module.exports = {
                         await db.write();
                         console.log(`Card claimed by: ${claimerId}`);
                     } catch (e) {
-                        console.error("Error writing to database (card claim):", e, { userId: claimerId }); // Changed error to e
+                        console.error("Error writing to database (card claim):", e, { userId: claimerId });
                         message.reply("Error: Failed to write to the database after claim.");
                         return;
                     }
@@ -299,10 +298,11 @@ module.exports = {
                     console.error("Error in end event", error, { messageId: dropMsg.id });
                 }
             });
-            // Deduct a drop after successful drop
+
+            // Deduct a drop and increment total drops after successful drop message sent
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                user.drops = (user.drops || 0) + 1; // Increment the drops count
+                user.drops += 1; // Increment the total drops count
                 if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
                     if (user.luckBoost.dropsRemaining <= 0) {
@@ -310,7 +310,7 @@ module.exports = {
                     }
                 }
                 try {
-                    await db.write(); // This write is crucial for saving the updated 'drops' and 'dropsAvailable'
+                    await db.write(); // Write the changes to dropsAvailable and total drops
                 } catch (error) {
                     console.error("Error writing to database (decrement dropsAvailable or increment drops):", error, { userId: dropperId });
                     message.reply("Error: Failed to update your drop count or total drops.");
