@@ -4,16 +4,28 @@ module.exports = {
   name: 'profile',
   description: 'View your profile, including card collection size, worth, balance, and total drops. Use `!profile @user` to view another user\'s profile.',
   async execute(message, args, { db, cards }) {
-    await db.read();
+    await db.read(); // Read the latest database state
 
     // Determine which user's profile to display
     const targetUser = message.mentions.users.first() || message.author;
     const userId = targetUser.id;
 
-    const user = db.data.users[userId] || { inventory: [], balance: 0, drops: 0 };
+    let user = db.data.users[userId]; // Get the user data
+
+    // Robust handling for user data, including the 'drops' property
+    if (!user) {
+        // If user doesn't exist in DB, create a temporary default object for display
+        user = { inventory: [], balance: 0, drops: 0 };
+    } else {
+        // If user exists but 'drops' property is missing or not a number, initialize it to 0
+        if (typeof user.drops !== 'number') {
+            user.drops = 0;
+        }
+    }
+
     const inventory = user.inventory || [];
     const balance = user.balance || 0;
-    const drops = user.drops || 0; // Retrieve the drops count
+    const totalDrops = user.drops; // Use the now guaranteed 'user.drops'
 
     let collectionWorth = 0;
     const cardIds = new Set();  // Use a Set to track unique cards
@@ -43,7 +55,7 @@ module.exports = {
         { name: 'Balance', value: `${balance}₩`, inline: true },
         { name: 'Collection Size', value: `${collectionSize}`, inline: true },
         { name: 'Collection Worth', value: `${collectionWorth}₩`, inline: true },
-        { name: 'Total Drops', value: `${drops}`, inline: true }, // Include total drops
+        { name: 'Total Drops Made', value: `${totalDrops}`, inline: true }, // Display total drops
       )
       .setThumbnail(targetUser.avatarURL());
 
