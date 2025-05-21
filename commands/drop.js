@@ -104,6 +104,9 @@ module.exports = {
             const COOLDOWN_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
             let user = db.data?.users?.[dropperId];
+
+            // Initialize user object with all necessary properties if it doesn't exist
+            // This also handles existing users who might not have the 'drops' property yet
             if (!user) {
                 user = {
                     lastDrops: [],
@@ -112,13 +115,19 @@ module.exports = {
                     balance: 0,
                     dropsAvailable: 10, // give 10 drops as default
                     luckBoost: null,
-                    cooldownMessageSent: false, // Add this new property
-                    drops: 0 // Initialize drops to 0
+                    cooldownMessageSent: false,
+                    drops: 0 // Ensure 'drops' is initialized for new users
                 };
                 if (!db.data) db.data = { users: {} };
                 db.data.users[dropperId] = user;
                 console.log(`Creating new user: ${dropperId}`);
+            } else {
+                // Ensure 'drops' property exists for existing users
+                if (user.drops === undefined) {
+                    user.drops = 0;
+                }
             }
+
 
             // Reset or check cooldown
             if (dropperId !== BYPASS_USER_ID) {
@@ -227,13 +236,19 @@ module.exports = {
             collector.on('collect', async (reaction, reactor) => {
                 try {
                     const claimerId = reactor.id;
-                    await db.read();
+                    await db.read(); // Re-read to get the latest state before modifying
                     let claimer = db.data?.users?.[claimerId];
+
                     if (!claimer) {
-                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 }; //give default drops to new user
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 }; // Initialize drops for new claimers
                         if (!db.data) db.data = { users: {} };
                         db.data.users[claimerId] = claimer;
                         console.log(`Creating new user (claimer): ${claimerId}`);
+                    } else {
+                        // Ensure 'drops' property exists for existing claimers
+                        if (claimer.drops === undefined) {
+                            claimer.drops = 0;
+                        }
                     }
 
                     // store only cardId + instance, value/title etc looked up later
@@ -259,7 +274,7 @@ module.exports = {
                         await db.write();
                         console.log(`Card claimed by: ${claimerId}`);
                     } catch (e) {
-                        console.error("Error writing to database (card claim):", error, { userId: claimerId });
+                        console.error("Error writing to database (card claim):", e, { userId: claimerId }); // Changed error to e
                         message.reply("Error: Failed to write to the database after claim.");
                         return;
                     }
@@ -287,8 +302,7 @@ module.exports = {
             // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
-                // Increment the drops count here!
-                user.drops = (user.drops || 0) + 1; // Ensure 'drops' is initialized if it doesn't exist
+                user.drops = (user.drops || 0) + 1; // Increment the drops count
                 if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
                     if (user.luckBoost.dropsRemaining <= 0) {
@@ -296,10 +310,10 @@ module.exports = {
                     }
                 }
                 try {
-                    await db.write();
+                    await db.write(); // This write is crucial for saving the updated 'drops' and 'dropsAvailable'
                 } catch (error) {
-                    console.error("Error writing to database (decrement dropsAvailable):", error, { userId: dropperId });
-                    message.reply("Error: Failed to update your drop count.");
+                    console.error("Error writing to database (decrement dropsAvailable or increment drops):", error, { userId: dropperId });
+                    message.reply("Error: Failed to update your drop count or total drops.");
                     return;
                 }
             }
