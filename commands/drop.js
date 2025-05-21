@@ -112,7 +112,8 @@ module.exports = {
                     balance: 0,
                     dropsAvailable: 10, // give 10 drops as default
                     luckBoost: null,
-                    cooldownMessageSent: false // Add this new property
+                    cooldownMessageSent: false, // Add this new property
+                    drops: 0 // Initialize drops to 0
                 };
                 if (!db.data) db.data = { users: {} };
                 db.data.users[dropperId] = user;
@@ -229,7 +230,7 @@ module.exports = {
                     await db.read();
                     let claimer = db.data?.users?.[claimerId];
                     if (!claimer) {
-                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false }; //give default drops to new user
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false, drops: 0 }; //give default drops to new user
                         if (!db.data) db.data = { users: {} };
                         db.data.users[claimerId] = claimer;
                         console.log(`Creating new user (claimer): ${claimerId}`);
@@ -286,6 +287,8 @@ module.exports = {
             // Deduct a drop after successful drop
             if (dropperId !== BYPASS_USER_ID) {
                 user.dropsAvailable -= 1;
+                // Increment the drops count here!
+                user.drops = (user.drops || 0) + 1; // Ensure 'drops' is initialized if it doesn't exist
                 if (user.luckBoost?.dropsRemaining > 0) {
                     user.luckBoost.dropsRemaining -= 1;
                     if (user.luckBoost.dropsRemaining <= 0) {
