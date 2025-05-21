@@ -12,14 +12,15 @@ module.exports = {
 
     let user = db.data.users[userId]; // Get the user data
 
-    // Robust handling for user data, including the 'drops' property
+    // **CRITICAL CHANGE HERE**
+    // Robust handling for user data, including the 'drops' property for display
     if (!user) {
         // If user doesn't exist in DB, create a temporary default object for display
         user = { inventory: [], balance: 0, drops: 0 };
     } else {
         // If user exists but 'drops' property is missing or not a number, initialize it to 0
         if (typeof user.drops !== 'number') {
-            user.drops = 0;
+            user.drops = 0; // Ensures totalDrops will be a number, not undefined/null/NaN
         }
     }
 
