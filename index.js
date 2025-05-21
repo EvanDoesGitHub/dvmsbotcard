@@ -12,17 +12,19 @@ async function initializeDatabase() {
     const { JSONFile } = await import('lowdb/node');
 
     const adapter = new JSONFile('/mnt/data/db.json');
-    // CORRECTED: Removed 'drops: {}' from defaultData.
-    // User-specific 'drops' will be initialized within the user object by commands.
-    const defaultData = { users: {}, auctions: [] };
+    // **CRITICAL CHANGE HERE**
+    // Removed 'drops: {}' from defaultData. 'drops' will now be
+    // initialized specifically within each user object by the commands.
+    const defaultData = { users: {}, auctions: [] }; // Corrected defaultData
     const db = new Low(adapter, defaultData);
     
     await db.read();
     
-    // Ensure db.data is initialized with the correct structure if the file was empty
-    db.data = db.data || { users: {}, auctions: [] };
+    // Ensure db.data is initialized with the correct structure if the file was empty.
+    // This is important for brand new deployments or if db.json is deleted.
+    db.data = db.data || { users: {}, auctions: [] }; 
     
-    await db.write(); // Write the default structure if the file was just created
+    await db.write(); // Write the default structure if the file was just created/empty
     return db;
 }
 
@@ -67,7 +69,8 @@ async function initializeDatabase() {
 
         try {
             // Import nanoid dynamically where needed if not globally available
-            const { nanoid } = await import('nanoid');
+            // If you consistently use nanoid, you could import it once at the top of index.js
+            const { nanoid } = await import('nanoid'); 
             await command.execute(message, args, { cards, db: client.db, EmbedBuilder, nanoid });
         } catch (err) {
             console.error(err);
