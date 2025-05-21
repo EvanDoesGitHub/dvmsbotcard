@@ -4,11 +4,11 @@ const { EmbedBuilder } = require('discord.js');
 function getRarity(user) {
     const rarityTable = {
         'Secret': 0.0005,      // 0.05%
-        'Mythic': 0.0045,       // 0.45%
+        'Mythic': 0.0045,        // 0.45%
         'Legendary': 0.02,      // 2%
-        'Epic': 0.075,        // 7.5%
-        'Rare': 0.1,          // 10%
-        'Uncommon': 0.2,        // 20%
+        'Epic': 0.075,         // 7.5%
+        'Rare': 0.1,           // 10%
+        'Uncommon': 0.2,         // 20%
         'Common': 0.6          // 60%
     };
 
@@ -111,7 +111,8 @@ module.exports = {
                     inventory: [],
                     balance: 0,
                     dropsAvailable: 10, // give 10 drops as default
-                    luckBoost: null
+                    luckBoost: null,
+                    cooldownMessageSent: false // Add this new property
                 };
                 if (!db.data) db.data = { users: {} };
                 db.data.users[dropperId] = user;
@@ -124,6 +125,7 @@ module.exports = {
                     user.lastDrops = [];
                     user.cooldownEnd = 0;
                     user.dropsAvailable = 10; //reset drops available
+                    user.cooldownMessageSent = false; // Reset the flag
                 }
 
                 if (user.cooldownEnd && now < user.cooldownEnd) {
@@ -133,17 +135,33 @@ module.exports = {
                         timeZone: 'America/Toronto',
                         hour12: false,
                     });
-                    return message.reply(`⏳ You've used all your drops. Resets in **${minutes} minutes** at ${resetTime}.  You can also buy more in the shop!`);
+                    return message.reply(`⏳ You've used all your drops. Resets in **${minutes} minutes** at ${resetTime}. You can also buy more in the shop!`);
                 }
 
                 if (user.dropsAvailable <= 0) {
-                    user.cooldownEnd = now + COOLDOWN_DURATION;
-                    try {
-                        await db.write();
-                    } catch (e) {
-                        console.error("Error writing to db", e);
+                    if (!user.cooldownMessageSent) { // Check if the message has been sent
+                        user.cooldownEnd = now + COOLDOWN_DURATION;
+                        user.cooldownMessageSent = true; // Set the flag
+                        try {
+                            await db.write();
+                        } catch (e) {
+                            console.error("Error writing to db", e);
+                        }
+                        const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
+                            timeZone: 'America/Toronto',
+                            hour12: false,
+                        });
+                        return message.reply(`You've used all your drops. Resets in **60 minutes** at ${resetTime}. You can also buy more in the shop!`);
+                    } else {
+                        // If cooldown message was already sent, just inform about the remaining time.
+                        const timeDiff = user.cooldownEnd - now;
+                        const minutes = Math.ceil(timeDiff / (60 * 1000));
+                        const resetTime = new Date(user.cooldownEnd).toLocaleString('en-US', {
+                            timeZone: 'America/Toronto',
+                            hour12: false,
+                        });
+                        return message.reply(`⏳ You've used all your drops. Resets in **${minutes} minutes** at ${resetTime}. You can also buy more in the shop!`);
                     }
-                    return message.reply('You have no more card drops available! They will reset in 1 hour. You can also buy more in the shop!');
                 }
             }
 
@@ -174,7 +192,7 @@ module.exports = {
             const finalValue = Math.ceil(baseValue * (1 + modifier));
 
             // build embed
-            let desc = `A **${selected.rarity}** card dropped!  (${percentage}, or ${fraction}) React ✅ to claim.`; //  fraction to description
+            let desc = `A **${selected.rarity}** card dropped! (${percentage}, or ${fraction}) React ✅ to claim.`; // fraction to description
             let remaining = dropperId === BYPASS_USER_ID ? 'unlimited' : user.dropsAvailable - 1;
             desc += `\nYou have **${remaining}** drops left.`;
             if (remaining !== 'unlimited' && remaining <= 2)
@@ -211,7 +229,7 @@ module.exports = {
                     await db.read();
                     let claimer = db.data?.users?.[claimerId];
                     if (!claimer) {
-                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3 }; //give default drops to new user
+                        claimer = { lastDrops: [], cooldownEnd: 0, inventory: [], balance: 0, dropsAvailable: 3, cooldownMessageSent: false }; //give default drops to new user
                         if (!db.data) db.data = { users: {} };
                         db.data.users[claimerId] = claimer;
                         console.log(`Creating new user (claimer): ${claimerId}`);
