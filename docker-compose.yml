@@ -7,7 +7,5 @@ services:
       dockerfile: Dockerfile
     container_name: dvmsbotcard
     restart: always
-    volumes:
-      - /volume1/docker/dvmsbotcard:/app
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
